@@ -463,7 +463,7 @@ static const yytype_int8 yyrhs[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    34,    34,    35,    36,    37,    38,    39,    42,    44,
-      45,    46,    48,    49,    50,    52,    53
+      45,    46,    48,    49,    50,    60,    61
 };
 #endif
 
@@ -1503,27 +1503,35 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 50 "test.y"
-    {(yyval.num) = (yyvsp[(1) - (3)].num) / (yyvsp[(3) - (3)].num);;}
+    { 
+																	if ((yyvsp[(3) - (3)].num) == 0)
+																		{
+																			yyerror ("invalid division by zero");
+																			YYERROR;
+																		}
+																	else
+																		(yyval.num) = (yyvsp[(1) - (3)].num) / (yyvsp[(3) - (3)].num);
+															;}
     break;
 
   case 15:
 
 /* Line 1455 of yacc.c  */
-#line 52 "test.y"
+#line 60 "test.y"
     {(yyval.num) = (yyvsp[(1) - (1)].num);;}
     break;
 
   case 16:
 
 /* Line 1455 of yacc.c  */
-#line 53 "test.y"
+#line 61 "test.y"
     {(yyval.num) = symbolVal((yyvsp[(1) - (1)].id));;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1527 "test.tab.c"
+#line 1535 "test.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1742,7 +1750,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 56 "test.y"
+#line 64 "test.y"
                      /* C code */
 
 int computeSymbolIndex(char token)
@@ -1782,4 +1790,6 @@ int main(int argc, char **argv){
 	return yyparse ( );
 }
 
-void yyerror (char *s) {fprintf (stderr, "%d %s\nkuy",yylineno-1, s);} 
+void yyerror (char *s) {
+	fprintf (stderr, "Line : %d, %s\n",yylineno, s);
+} 

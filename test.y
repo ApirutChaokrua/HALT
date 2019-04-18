@@ -47,7 +47,15 @@ exp    	: exp2	{;}
        	;
 exp2		:	 term                  {$$ = $1;}
 		| exp2 '*' term          {$$ = $1 * $3;}
-		| exp2 '/' term          {$$ = $1 / $3;}
+		| exp2 '/' term          { 
+																	if ($3 == 0)
+																		{
+																			yyerror ("invalid division by zero");
+																			YYERROR;
+																		}
+																	else
+																		$$ = $1 / $3;
+															}
 				;
 term   	: number                {$$ = $1;}
 		| identifier			{$$ = symbolVal($1);} 
@@ -92,4 +100,6 @@ int main(int argc, char **argv){
 	return yyparse ( );
 }
 
-void yyerror (char *s) {fprintf (stderr, "%d %s\nkuy",yylineno-1, s);} 
+void yyerror (char *s) {
+	fprintf (stderr, "Line : %d, %s\n",yylineno, s);
+} 
