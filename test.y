@@ -78,12 +78,7 @@ void updateSymbolVal(char symbol, int val)
 int main(int argc, char **argv){
 	int input=1;
     	yyin = fopen(argv[1], "r");
-// while(yylex())
-//     {
-//              printf("kuy and/n");
-//     }
-//     fclose(yyin);
-//dddd
+// kuy tan
 
 	return yyparse ( );
 }
