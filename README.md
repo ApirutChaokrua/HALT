@@ -5,7 +5,7 @@ Compiler Construction “Elementary Compiler” assignment
 
 ## Getting Started
 
-Buid lexer Parser
+Buid lexer Parser and run
 
 ```
   $ flex test.l
@@ -17,10 +17,10 @@ Buid lexer Parser
 
 ### Grammar
 
-Say what the step will be
+asm
 
 ```
-Give the example
+A <- 1+2
 ```
 
 
@@ -30,7 +30,7 @@ Give the example
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
+* Flex
+* Bison
 * etc
 
