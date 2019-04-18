@@ -83,6 +83,7 @@ int main(int argc, char **argv){
 //              printf("kuy and/n");
 //     }
 //     fclose(yyin);
+//dddd
 
 	return yyparse ( );
 }
