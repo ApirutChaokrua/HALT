@@ -3,7 +3,7 @@
 It is "HALT!" compiler
 Compiler Construction “Elementary Compiler” assignment
 
-## Getting Started
+## Buid
 
 Buid lexer Parser and run
 
@@ -11,13 +11,22 @@ Buid lexer Parser and run
   $ flex test.l
   $ yacc -d test.y
   $ gcc  -o test.exe  test.tab.c 
-  $ test.exe code.exe
+  
+  $ test.exe code.txt
+
+```
+
+Buid via Makefile
+
+```
+  $ make 
+  $ make clean  
 
 ```
 
 ### Grammar
 
-asm
+assign 
 
 ```
 A <- 1+2
