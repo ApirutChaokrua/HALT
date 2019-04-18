@@ -18,9 +18,14 @@ void updateSymbolVal(char symbol, int val);
 %token exit_command
 %token <num> number
 %token <id> identifier
-%type <num> line exp term 
+%type <num> line exp term exp2 
 %type <id> assignment
 %locations
+
+%right "<-" 
+%left LE_OP GE_OP EQ_OP 
+%left '+' '-'  
+%left '*' '/' 
 
 %%
 
@@ -36,10 +41,14 @@ line    : assignment ';'	{;}
 
 assignment : identifier ASSIGN_OP exp  { updateSymbolVal($1,$3); }
 			;
-exp    	: term                  {$$ = $1;}
-       	| exp '+' term          {$$ = $1 + $3;}
-       	| exp '-' term          {$$ = $1 - $3;}
+exp    	: exp2	{;}
+		| exp '+' exp2          {$$ = $1 + $3;}
+		| exp '-' exp2          {$$ = $1 - $3;}
        	;
+exp2		:	 term                  {$$ = $1;}
+		| exp2 '*' term          {$$ = $1 * $3;}
+		| exp2 '/' term          {$$ = $1 / $3;}
+				;
 term   	: number                {$$ = $1;}
 		| identifier			{$$ = symbolVal($1);} 
         ;
