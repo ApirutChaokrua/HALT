@@ -263,6 +263,9 @@ static void yy_flex_free YY_PROTO(( void * ));
 
 
 #define YY_USES_REJECT
+
+#define yywrap() 1
+#define YY_SKIP_YYWRAP
 typedef unsigned char YY_CHAR;
 FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;
 typedef int yy_state_type;
@@ -286,31 +289,31 @@ static void yy_fatal_error YY_PROTO(( yyconst char msg[] ));
 	*yy_cp = '\0'; \
 	yy_c_buf_p = yy_cp;
 
-#define YY_NUM_RULES 26
-#define YY_END_OF_BUFFER 27
-static yyconst short int yy_acclist[92] =
+#define YY_NUM_RULES 27
+#define YY_END_OF_BUFFER 28
+static yyconst short int yy_acclist[93] =
     {   0,
-       27,   25,   26,   23,   25,   26,   26,   25,   26,   14,
-       25,   26,   15,   25,   26,   24,   25,   26,   22,   25,
-       26,   18,   25,   26,   24,   25,   26,   19,   25,   26,
-       21,   25,   26,   21,   25,   26,   21,   25,   26,   21,
-       25,   26,   21,   25,   26,   21,   25,   26,   16,   25,
-       26,   17,   25,   26,   22,   20,   10,   12,   11,   21,
-       21,   21,   21,   21,   21,   21,    4,   21,   21,   21,
-       21,   21,   13,   21,    2,    3,    7,   21,   21,    5,
-       21,    9,   21,    1,   21,   21,   21,    8,   21,    6,
-       21
+       28,   26,   27,   24,   26,   27,   21,   27,   26,   27,
+       14,   26,   27,   15,   26,   27,   25,   26,   27,   23,
+       26,   27,   18,   26,   27,   25,   26,   27,   19,   26,
+       27,   22,   26,   27,   22,   26,   27,   22,   26,   27,
+       22,   26,   27,   22,   26,   27,   22,   26,   27,   16,
+       26,   27,   17,   26,   27,   23,   20,   10,   12,   11,
+       22,   22,   22,   22,   22,   22,   22,    4,   22,   22,
+       22,   22,   22,   13,   22,    2,    3,    7,   22,   22,
+        5,   22,    9,   22,    1,   22,   22,   22,    8,   22,
+        6,   22
 
     } ;
 
 static yyconst short int yy_accept[60] =
     {   0,
-        1,    1,    1,    2,    4,    7,    8,   10,   13,   16,
-       19,   22,   25,   28,   31,   34,   37,   40,   43,   46,
-       49,   52,   55,   55,   55,   55,   56,   57,   58,   59,
-       60,   61,   62,   63,   64,   65,   66,   67,   67,   68,
-       68,   69,   70,   71,   72,   73,   75,   76,   77,   79,
-       80,   82,   84,   86,   87,   88,   90,   92,   92
+        1,    1,    1,    2,    4,    7,    9,   11,   14,   17,
+       20,   23,   26,   29,   32,   35,   38,   41,   44,   47,
+       50,   53,   56,   56,   56,   56,   57,   58,   59,   60,
+       61,   62,   63,   64,   65,   66,   67,   68,   68,   69,
+       69,   70,   71,   72,   73,   74,   76,   77,   78,   80,
+       81,   83,   85,   87,   88,   89,   91,   93,   93
     } ;
 
 static yyconst int yy_ec[256] =
@@ -427,7 +430,7 @@ char *yytext;
 #include "test.tab.h"
 void yyerror (char *s);
 int yylex();
-#line 431 "lex.yy.c"
+#line 434 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -578,9 +581,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 16 "test.l"
+#line 17 "test.l"
 
-#line 584 "lex.yy.c"
+#line 587 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -673,137 +676,144 @@ do_action:	/* This label is used only to access EOF actions. */
 	{ /* beginning of action switch */
 case 1:
 YY_RULE_SETUP
-#line 17 "test.l"
+#line 18 "test.l"
 { return exit_command;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 18 "test.l"
+#line 19 "test.l"
 { return DEF; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 19 "test.l"
+#line 20 "test.l"
 { return VAR; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 20 "test.l"
+#line 21 "test.l"
 { return IF; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 21 "test.l"
+#line 22 "test.l"
 { return SHOW;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 22 "test.l"
+#line 23 "test.l"
 { return SHOWLN; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 23 "test.l"
+#line 24 "test.l"
 { return LOOP; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 24 "test.l"
+#line 25 "test.l"
 { return RETURN;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 25 "test.l"
+#line 26 "test.l"
 { return BREAK;}    
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 26 "test.l"
+#line 27 "test.l"
 { return LE_OP; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 27 "test.l"
+#line 28 "test.l"
 { return GE_OP; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 28 "test.l"
+#line 29 "test.l"
 { return EQ_OP; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 29 "test.l"
+#line 30 "test.l"
 { return MOD_OP; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 30 "test.l"
+#line 31 "test.l"
 { return L_BRACKET; }   // round brackets
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 31 "test.l"
+#line 32 "test.l"
 { return R_BRACKET; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 32 "test.l"
+#line 33 "test.l"
 { return L_CBRACKET; }  // curly brackets
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 33 "test.l"
+#line 34 "test.l"
 { return R_CBRACKET; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 34 "test.l"
+#line 35 "test.l"
 { return L_ABRACKET; }  // angle brackets
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 35 "test.l"
+#line 36 "test.l"
 { return R_ABRACKET; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 36 "test.l"
+#line 37 "test.l"
 { return ASSIGN_OP; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 39 "test.l"
-{yylval.id = yytext[0]; return identifier;}
+#line 38 "test.l"
+{return EOL;} 
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 40 "test.l"
-{yylval.num = atoi(yytext); return number;}
+#line 41 "test.l"
+{yylval.id = yytext[0]; return identifier;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 41 "test.l"
-;
+#line 42 "test.l"
+{yylval.num = atoi(yytext); return number;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 42 "test.l"
-{return yytext[0];}
+#line 43 "test.l"
+;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 44 "test.l"
-{ECHO; yyerror ("unexpected character");}
+{return yytext[0];}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 46 "test.l"
+{ECHO; yyerror ("unexpected character");}
+	YY_BREAK
+case YY_STATE_EOF(INITIAL):
+#line 47 "test.l"
+{ yyterminate();}
+	YY_BREAK
+case 27:
+YY_RULE_SETUP
+#line 48 "test.l"
 ECHO;
 	YY_BREAK
-#line 805 "lex.yy.c"
-			case YY_STATE_EOF(INITIAL):
-				yyterminate();
+#line 817 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -1685,6 +1695,6 @@ int main()
 	return 0;
 	}
 #endif
-#line 46 "test.l"
+#line 48 "test.l"
 
-int yywrap (void) {return 1;}
+// int yywrap (void) {return 1;}

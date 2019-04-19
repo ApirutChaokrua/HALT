@@ -5,18 +5,18 @@ Compiler Construction “Elementary Compiler” assignment
 
 ## Buid
 
-Buid lexer Parser and run
+Buid **cmd**
 
 ```
   $ flex test.l
   $ yacc -d test.y
   $ gcc  -o test.exe  test.tab.c 
-  
+
   $ test.exe code.txt
 
 ```
 
-Buid via Makefile
+Buid via **Makefile**
 
 ```
   $ make 

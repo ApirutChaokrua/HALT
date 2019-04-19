@@ -15,7 +15,8 @@ void updateSymbolVal(char symbol, int val);
 %token ASSIGN_OP 
 %token DEF VAR IF SHOWLN LOOP RETURN BREAK LE_OP GE_OP EQ_OP MOD_OP 
 %token L_BRACKET R_BRACKET L_CBRACKET R_CBRACKET L_ABRACKET R_ABRACKET
-%token exit_command
+%token exit_command tok_EOF
+%token EOL    "end-of-line"
 %token <num> number
 %token <id> identifier
 %type <num> line exp term exp2 
@@ -31,13 +32,16 @@ void updateSymbolVal(char symbol, int val);
 
 /* descriptions of expected inputs     corresponding actions (in C) */
 
-line    : assignment ';'	{;}
-		| exit_command ';'		{exit(EXIT_SUCCESS);}
-		| SHOW exp 		';'	{printf("Printing %d\n", $2);}
-		| line assignment ';'	{;}
-		| line SHOW exp ';'	{printf("Printing %d\n", $3);}
-		| line exit_command ';'	{exit(EXIT_SUCCESS);}
+
+line    : assignment EOL	{;}
+		| exit_command 		{exit(EXIT_SUCCESS);}
+		| SHOW exp 		EOL	{printf("Printing %d\n", $2);}
+		| line assignment EOL	{;}
+		| line SHOW exp EOL	{printf("Printing %d\n", $3);}
+		| line exit_command	{exit(EXIT_SUCCESS);}
+		| error { yyerror(" line error\n"); }
         ;
+
 
 assignment : identifier ASSIGN_OP exp  { updateSymbolVal($1,$3); }
 			;
@@ -94,7 +98,6 @@ void updateSymbolVal(char symbol, int val)
 int main(int argc, char **argv){
 	int input=1;
     	yyin = fopen(argv[1], "r");
-// kuy tan
 
 	return yyparse ( );
 }

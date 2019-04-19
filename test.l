@@ -12,6 +12,7 @@ int yylex();
 %}
 
 %option yylineno
+%option noyywrap
 
 %%
 "exit"				  { return exit_command;}
@@ -34,6 +35,7 @@ int yylex();
 "<"			        { return L_ABRACKET; }  // angle brackets
 ">"			        { return R_ABRACKET; }
 "<-"			      { return ASSIGN_OP; }
+"\n"                {return EOL;} 
 
 
 {L}({L}|{D})*			   {yylval.id = yytext[0]; return identifier;}
@@ -42,6 +44,6 @@ int yylex();
 [-+=*/;]           	   {return yytext[0];}
 
 .                      {ECHO; yyerror ("unexpected character");}
-
+<<EOF>>                 { yyterminate();}
 %%
-int yywrap (void) {return 1;}
+// int yywrap (void) {return 1;}
