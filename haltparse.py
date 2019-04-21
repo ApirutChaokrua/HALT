@@ -1,5 +1,5 @@
 # An implementation of Dartmouth BASIC (1964)
-#
+
 
 from ply import *
 import basiclex
@@ -7,9 +7,8 @@ import basiclex
 tokens = basiclex.tokens
 
 precedence = (
-    ('left', 'PLUS', 'MINUS'),
-    ('left', 'TIMES', 'DIVIDE'),
-    ('left', 'POWER'),
+    ('left', '+', '-'),
+    ('left', '*', '/'),
     ('right', 'UMINUS')
 )
 
