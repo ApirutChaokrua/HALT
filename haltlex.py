@@ -8,7 +8,7 @@ keywords = (
 
     'EXIT', 'DEF', 'VAR', 'IF', 'SHOW', 'SHOWLN', 'LOOP', 'RETURN', 'BREAK', 
     'LE_OP', 'GE_OP', 'EQ_OP','LT_OP', 'GT_OP','MOD_OP', 'L_BRACKET', 'R_BRACKET', 'L_CURLYBRACKET', 'R_CURLYCBRACKET', 'L_ANGLEBRACKET', 'R_ANGLEBRACKET', 'ASSIGN_OP', 
-    'ADD_OP', 'MINUS_OP', 'MUL_OP', 'DIVIDE_OP'
+    'ADD_OP', 'MINUS_OP', 'MUL_OP', 'DIVIDE_OP', 'SIGN_INTEGER'
 )
 tokens = keywords + (
     'EQUALS', 'TIMES', 'POWER',
@@ -71,6 +71,8 @@ t_L_ANGLEBRACKET = r'\<'
 t_R_ANGLEBRACKET = r'\>'
 t_ASSIGN_OP = r'<-'
 t_INTEGER = r'\d+'
+t_SIGN_INTEGER = r'[+-]?[0-9]+'
+t_HEX_INTEGER = r'(Hx)?[a-fA-F0-9]+'
 t_ADD_OP = r'\+'
 t_MINUS_OP = r'-'
 t_MUL_OP = r'\*'
