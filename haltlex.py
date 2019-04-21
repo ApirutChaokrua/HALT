@@ -8,7 +8,7 @@ keywords = (
 
     'EXIT', 'DEF', 'VAR', 'IF', 'SHOW', 'SHOWLN', 'LOOP', 'RETURN', 'BREAK', 
     'LE', 'GE', 'EQ','LT', 'GT','MOD', 'LBRACKET', 'RBRACKET', 'LCURLYBRACKET', 'RCURLYCBRACKET', 'LANGLEBRACKET', 'RANGLEBRACKET', 'ASSIGN', 
-    'ADD', 'MINUS', 'MUL', 'DIVIDE'
+    'ADD', 'MINUS', 'MUL', 'DIVIDE','QUEST', 'LSBRACKET', 'RSBRACKET'
 )
 tokens = keywords + (
     'EQUALS', 'TIMES', 'POWER',
@@ -62,10 +62,12 @@ t_LT = r'<'
 t_GT = r'>'
 t_EQ = r'=='
 t_MOD = r'mod'
-t_LBRACKET = r'\)'
-t_RBRACKET = r'\('
+t_RBRACKET = r'\)'
+t_LBRACKET = r'\('
 t_LCURLYBRACKET = r'\{'
 t_RCURLYCBRACKET = r'\}'
+t_LSBRACKET = r'\['
+t_RSBRACKET = r'\]'
 t_LANGLEBRACKET = r'\<'
 t_RANGLEBRACKET = r'\>'
 t_ASSIGN = r'<-'
@@ -74,6 +76,7 @@ t_ADD = r'\+'
 t_MINUS = r'-'
 t_MUL = r'\*'
 t_DIVIDE = r'/'
+t_QUEST = r'\?'
 
 def t_NEWLINE(t):
     r'\n'
@@ -84,4 +87,15 @@ def t_error(t):
     print("Illegal character %s" % t.value[0])
     t.lexer.skip(1)
 
-lex.lex(debug=0)
+lexer = lex.lex(debug=0)
+
+
+# test Laxer
+lexer.input("1+2")
+
+while True:
+    tok = lexer.token()
+    if not tok:
+        break
+    print(tok)
+
