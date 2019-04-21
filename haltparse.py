@@ -2,19 +2,19 @@
 
 
 from ply import *
-import basiclex
+import haltlex
 
-tokens = basiclex.tokens
+tokens = haltlex.tokens
 
 precedence = (
+    ('right', '<-'),
     ('left', '+', '-'),
     ('left', '*', '/'),
-    ('right', 'UMINUS')
+    ('left', 'LE_OP', 'GE_OP','EQ_OP'),
 )
 
 # A BASIC program is a series of statements.  We represent the program as a
 # dictionary of tuples indexed by line number.
-
 
 def p_program(p):
     '''program : program statement
@@ -34,7 +34,6 @@ def p_program(p):
 
 # This catch-all rule is used for any catastrophic errors.  In this case,
 # we simply return nothing
-
 
 def p_program_error(p):
     '''program : error'''
@@ -449,25 +448,25 @@ def p_item_expr(p):
     '''pitem : expr'''
     p[0] = ("", p[1])
 
+
+
 # Empty
-
-
 def p_empty(p):
     '''empty : '''
 
 # Catastrophic error handler
-
-
 def p_error(p):
     if not p:
         print("SYNTAX ERROR AT EOF")
+    else
+        print("line: '%s'" % p.value)
 
-bparser = yacc.yacc()
-
+hparser = yacc.yacc()
 
 def parse(data, debug=0):
-    bparser.error = 0
-    p = bparser.parse(data, debug=debug)
-    if bparser.error:
+    hparser.error = 0
+    p = hparser.parse(data, debug=debug)
+    if hparser.error:
+        print("error")
         return None
     return p
