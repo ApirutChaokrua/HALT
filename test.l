@@ -35,15 +35,14 @@ int yylex();
 "<"			        { return L_ABRACKET; }  // angle brackets
 ">"			        { return R_ABRACKET; }
 "<-"			      { return ASSIGN_OP; }
-"\n"                {return EOL;} 
+"\n"            { return EOL;} 
 
 
-{L}({L}|{D})*			   {yylval.id = yytext[0]; return identifier;}
+{L}({L}|{D})*			    {yylval.id = yytext[0]; return identifier;}
 {D}+                  {yylval.num = atoi(yytext); return number;}
-[ \t]                ;
-[-+=*/;]           	   {return yytext[0];}
-
-.                      {ECHO; yyerror ("unexpected character");}
+[ \t]                 ;
+[-+=*/;]           	  {return yytext[0];}
+.                     {ECHO; yyerror ("unexpected character");}
 <<EOF>>                 { yyterminate();}
 %%
 // int yywrap (void) {return 1;}
