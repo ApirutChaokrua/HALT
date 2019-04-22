@@ -28,11 +28,6 @@ def t_NUMBER(t):
     t.value = int(t.value)
     return t
 
-def t_IDENTIFIER(t):
-    r'[A-Z][A-Z0-9]*'
-    if t.value in keywords:
-        t.type = t.value
-    return t
 
 def t_ID(t):
     r'[a-zA-Z][a-zA-Z0-9]*'

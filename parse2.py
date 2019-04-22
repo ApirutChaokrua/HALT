@@ -16,15 +16,18 @@ precedence = (
 # dictionary of tuples indexed by line number.
 def p_code(p):
     '''
-    code : code stm EOL
-         | stm EOL
-         | empty
+    code : code EOL stm 
+         | stm 
     '''
     if len(p) == 4 :
-        p[0] = ('MULTIPLE_LINE',p[1],p[2])
+        p[0] = ('MULTIPLE_LINE',p[1],p[3])
     else:
         p[0] = p[1]
     
+def p_code2(p):
+    '''
+    stm : EOL
+    '''
 
 # This catch-all rule is used for any catastrophic errors.  In this case,
 # we simply return nothing
@@ -45,7 +48,7 @@ def p_stm(p):
          | stop 
          | return
          | empty
-         | stm 
+         | EOL stm 
 
     '''
     p[0] = p[1]
