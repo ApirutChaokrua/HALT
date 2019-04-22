@@ -1,6 +1,7 @@
 # An implementation of Dartmouth BASIC (1964)
 
 from ply import *
+import ply.lex as lex
 
 keywords = (
     'LET', 'READ', 'DATA', 'PRINT', 'GOTO', 'THEN', 'FOR', 'NEXT', 'TO', 'STEP',
