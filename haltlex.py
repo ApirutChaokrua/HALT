@@ -89,7 +89,6 @@ def t_error(t):
 
 lexer = lex.lex(debug=0)
 
-
 # test Laxer
 lexer.input("1+2")
 
