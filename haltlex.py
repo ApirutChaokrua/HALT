@@ -100,4 +100,13 @@ def t_error(t):
     print("Illegal character %s" % t.value[0])
     t.lexer.skip(1)
 
-lex.lex(debug=0)
+lexer = lex.lex(debug=0)
+
+# test Laxer
+lexer.input("1+2")
+
+while True:
+    tok = lexer.token()
+    if not tok:
+        break
+    print(tok)
