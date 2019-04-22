@@ -15,11 +15,9 @@ keywords = (
     # , 'HEX_NUMBER',, 'NEWLINE', 'SIGN_NUMBER' ,  'L_ANGLEBRACKET', 'R_ANGLEBRACKET', 'SEMI'  ,
 
 )
-tokens = keywords + (
+tokens = keywords 
 
-)
-
-t_ignore = ' \t'
+t_ignore = ' \t\v\f'
 
 def t_REM(t):
     r'REM .*'
@@ -37,7 +35,7 @@ def t_IDENTIFIER(t):
     return t
 
 def t_ID(t):
-    r'[A-Z][A-Z0-9]*'
+    r'[a-zA-Z][a-zA-Z0-9]*'
     if t.value in keywords:
         t.type = t.value
     return t
@@ -101,6 +99,7 @@ def t_ccode_comment(t):
 def t_EOL(t):
     r'\n'
     t.lexer.lineno += 1
+    t.type = "EOL"
     return t
 
 def t_error(t):
@@ -110,7 +109,7 @@ def t_error(t):
 lexer = lex.lex(debug=0)
 
 # test Laxer
-lexer.input("INF")
+lexer.input("\n")
 
 
 while True:

@@ -16,9 +16,12 @@ precedence = (
 # dictionary of tuples indexed by line number.
 def p_code(p):
     '''
-    code : code stm
-         | stm
+    code : code stm EOL
+         | stm EOL
+         | empty
     '''
+    p[0] = p[1]
+
 # This catch-all rule is used for any catastrophic errors.  In this case,
 # we simply return nothing
 def p_code_error(p):
@@ -38,7 +41,7 @@ def p_stm(p):
          | stop 
          | return
          | empty
-         | stm EOL
+         | stm 
     '''
     p[0] = p[1]
 # TYPE OF NUMBER
@@ -98,6 +101,7 @@ def p_assign_stm(p):
     assign_stm : ID ASSIGN_OP type_num
                | ID ASSIGN_OP exp_stm
     ''' 
+    p[0] = ('ASSIGN', p[1], p[3]) 
 
 def p_exp_stm(p):
     # '''
@@ -118,12 +122,15 @@ def p_exp_stm(p):
     '''
     if(len(p) > 2):
         p[0] = ('EXP', p[2], p[1], p[3])
+    else:
+        p[0] = p[1]
 
 # IF statement
 def p_if_stm(p):
     '''
     if_stm : IF condition QUEST L_CURLYBRACKET stm R_CURLYBRACKET
     '''
+    p[0] = ('IF', p[2], p[5])
 def p_condition_LE(p):
     'condition : exp_stm LE_OP exp_stm'
     p[0] = ('LE_OP', p[1], p[3])
@@ -150,16 +157,31 @@ def p_loop_stm(p):
     loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET stm R_CURLYBRACKET
              | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET stm R_CURLYBRACKET
     '''
+    p[0] = ('LOOP', p[3], p[6])
 # SHOW statement
 def p_show_stm(p):
     '''
     show_stm : SHOW msg
              | SHOWLN
+    '''
+    if(len(p) == 3):
+        p[0] = ('SHOW', p[2])
+    else :
+        p[0] = p[1]
+
+
+def p_show_stm_msg(p):
+    '''
     msg : msg ADD_OP msg
         | type_num
         | STRING
         | empty
     '''
+    if(len(p) == 4):
+        p[0] = ("CONCAT_MSG",p[1], p[3])
+    else :
+        p[0] = p[1]
+
 
 # EXIT statement
 def p_stop(p):
@@ -189,6 +211,18 @@ def p_error(p):
         print("line: '%s'" % p.value)
 
 hparser = yacc.yacc()
+lines = open("test.halt", 'r').read()
+tree = hparser.parse(lines)
+print(tree)
+
+
+# while True:
+#     try:
+#         s = input("")
+#     except EOFError:
+#         break
+#     tree = hparser.parse(s)
+#     print(tree)
 
 def parse(data, debug=0):
     hparser.error = 0
