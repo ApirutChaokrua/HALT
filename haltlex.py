@@ -8,12 +8,12 @@ keywords = (
 
     'EXIT', 'DEF', 'VAR', 'IF', 'SHOW', 'SHOWLN', 'LOOP', 'RETURN', 'BREAK', 
     'LE_OP', 'GE_OP', 'EQ_OP','LT_OP', 'GT_OP','MOD_OP', 'L_BRACKET', 'R_BRACKET', 'L_CURLYBRACKET', 'R_CURLYCBRACKET', 'L_ANGLEBRACKET', 'R_ANGLEBRACKET', 'ASSIGN_OP', 
-    'ADD_OP', 'MINUS_OP', 'MUL_OP', 'DIVIDE_OP', 'SIGN_INTEGER'
+    'ADD_OP', 'MINUS_OP', 'MUL_OP', 'DIVIDE_OP', 'SIGN_NUMBER' , 'HEX_NUMBER', 'NUMBER'
 )
 tokens = keywords + (
     'EQUALS', 'TIMES', 'POWER',
     'LPAREN', 'RPAREN', 'NE',
-    'COMMA', 'SEMI', 'INTEGER', 'FLOAT', 'STRING',
+    'COMMA', 'SEMI', 'FLOAT', 'STRING',
     'ID', 'NEWLINE'
 )
 
@@ -21,6 +21,11 @@ t_ignore = ' \t'
 
 def t_REM(t):
     r'REM .*'
+    return t
+
+def t_NUMBER(t):
+    r'\d+'
+    t.value = int(t.value)
     return t
 
 def t_IDENTIFIER(t):
@@ -55,8 +60,6 @@ t_SEMI = r';'
 t_FLOAT = r'((\d*\.\d+)(E[\+-]?\d+)?|([1-9]\d*E[\+-]?\d+))'
 t_STRING = r'\".*?\"'
 
-
-
 t_LE_OP = r'<='
 t_GE_OP = r'>='
 t_LT_OP = r'<'
@@ -70,13 +73,23 @@ t_R_CURLYCBRACKET = r'\}'
 t_L_ANGLEBRACKET = r'\<'
 t_R_ANGLEBRACKET = r'\>'
 t_ASSIGN_OP = r'<-'
-t_INTEGER = r'\d+'
-t_SIGN_INTEGER = r'[+-]?[0-9]+'
-t_HEX_INTEGER = r'(Hx)?[a-fA-F0-9]+'
+t_NUMBER = r'\d+'
+t_SIGN_NUMBER = r'[+-]?[0-9]+'
+t_HEX_NUMBER = r'(Hx)?[a-fA-F0-9]+'
 t_ADD_OP = r'\+'
 t_MINUS_OP = r'-'
 t_MUL_OP = r'\*'
 t_DIVIDE_OP = r'/'
+
+# ---------------- Comment --------------------
+def t_COMMENT(t):
+     r'\#.*'
+     pass
+     # No return value. Token discarded
+def t_ccode_comment(t):
+    r'(/\*(.|\n)*?\*/)|(//.*)'
+    pass
+# ----------------------------------------------
 
 def t_NEWLINE(t):
     r'\n'

@@ -448,8 +448,6 @@ def p_item_expr(p):
     '''pitem : expr'''
     p[0] = ("", p[1])
 
-
-
 # Empty
 def p_empty(p):
     '''empty : '''
