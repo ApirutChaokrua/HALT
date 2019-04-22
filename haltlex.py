@@ -65,8 +65,8 @@ t_LT_OP = r'<'
 t_GT_OP = r'>'
 t_EQ_OP = r'=='
 t_MOD_OP = r'mod'
-t_L_BRACKET = r'\)'
-t_R_BRACKET = r'\('
+t_R_BRACKET = r'\)'
+t_L_BRACKET = r'\('
 t_L_CURLYBRACKET = r'\{'
 t_R_CURLYBRACKET = r'\}'
 # t_L_ANGLEBRACKET = r'\<'
@@ -109,7 +109,7 @@ def t_error(t):
 lexer = lex.lex(debug=0)
 
 # test Laxer
-lexer.input("\n")
+lexer.input("")
 
 
 while True:

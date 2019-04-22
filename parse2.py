@@ -20,7 +20,11 @@ def p_code(p):
          | stm EOL
          | empty
     '''
-    p[0] = p[1]
+    if len(p) == 4 :
+        p[0] = ('MULTIPLE_LINE',p[1],p[2])
+    else:
+        p[0] = p[1]
+    
 
 # This catch-all rule is used for any catastrophic errors.  In this case,
 # we simply return nothing
@@ -42,6 +46,7 @@ def p_stm(p):
          | return
          | empty
          | stm 
+
     '''
     p[0] = p[1]
 # TYPE OF NUMBER
@@ -84,15 +89,17 @@ def p_var_stm(p):
     else :
         p[0] = ('VAR', p[2], p[4])
 
-def p_var_stm_list(p):
+def p_var_stm_list(p): 
     ''' 
-    var_stm : VAR ID L_SBRACKET NUMBER R_SBRACKET
-            | VAR ID L_SBRACKET type_num R_SBRACKET ASSIGN_OP L_CURLYBRACKET set_num R_CURLYBRACKET
+    var_stm :  VAR ID L_SBRACKET type_num R_SBRACKET ASSIGN_OP L_CURLYBRACKET set_num R_CURLYBRACKET
+            |  VAR ID L_SBRACKET type_num R_SBRACKET 
     '''
+
+    print("array")
     if(len(p) == 6):
         p[0] = ('VAR_LIST', p[2], p[4], 'none')
     else :
-        p[0] = ('VAR_LIST_VALUE', p[2], p[4], p[7])
+        p[0] = ('VAR_LIST_VALUE', p[2], p[4], p[8])
 
 
 # Assignment statement
@@ -128,9 +135,15 @@ def p_exp_stm(p):
 # IF statement
 def p_if_stm(p):
     '''
-    if_stm : IF condition QUEST L_CURLYBRACKET stm R_CURLYBRACKET
+    if_stm : IF condition QUEST L_CURLYBRACKET EOL stm  EOL R_CURLYBRACKET
+           | IF condition QUEST L_CURLYBRACKET stm R_CURLYBRACKET
+  
     '''
-    p[0] = ('IF', p[2], p[5])
+    if(len(p) == 9):
+        p[0] = ('IF', p[2], p[6])
+    else :
+        p[0] = ('IF', p[2], p[5])
+
 def p_condition_LE(p):
     'condition : exp_stm LE_OP exp_stm'
     p[0] = ('LE_OP', p[1], p[3])
@@ -154,18 +167,18 @@ def p_condition_EQ(p):
 # LOOP statement
 def p_loop_stm(p):
     '''
-    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET stm R_CURLYBRACKET
-             | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET stm R_CURLYBRACKET
+    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET EOL stm EOL R_CURLYBRACKET
+             | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET EOL stm EOL R_CURLYBRACKET
     '''
-    p[0] = ('LOOP', p[3], p[6])
+    p[0] = ('LOOP', p[3], p[7])
 # SHOW statement
 def p_show_stm(p):
     '''
-    show_stm : SHOW msg
+    show_stm : SHOW L_BRACKET msg R_BRACKET
              | SHOWLN
     '''
-    if(len(p) == 3):
-        p[0] = ('SHOW', p[2])
+    if(len(p) == 5):
+        p[0] = ('SHOW', p[3])
     else :
         p[0] = p[1]
 
@@ -197,7 +210,7 @@ def p_return(p):
 def p_number_signed(p):
     '''sign_number  : MINUS_OP NUMBER
     '''
-    p[0] = eval("-" + p[2])
+    p[0] = eval("-" + str(p[2]))
 
 # Empty
 def p_empty(p):
@@ -231,3 +244,4 @@ def parse(data, debug=0):
         print("hparser error")
         return None
     return p
+
