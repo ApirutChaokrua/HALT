@@ -25,9 +25,16 @@ def p_code(p):
         p[0] = p[1]
     
 def p_code2(p):
+    ''' 
+    stmSpace : stmSpace EOL code
+             | EOL code
     '''
-    stm : EOL
-    '''
+    if len(p) == 4 :
+        p[0] = p[3]
+    else:
+        p[0] = p[2]
+
+    
 
 # This catch-all rule is used for any catastrophic errors.  In this case,
 # we simply return nothing
@@ -48,8 +55,7 @@ def p_stm(p):
          | stop 
          | return
          | empty
-         | EOL stm 
-
+         | stmSpace
     '''
     p[0] = p[1]
 # TYPE OF NUMBER

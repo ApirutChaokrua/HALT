@@ -1,14 +1,12 @@
+
+
 VAR A <- 5
+
+
 SHOW("asd")
 
 
+VAR b <- 6
 
 
 
-
-
-
-
-
-
-VAR b <- 5
