@@ -65,8 +65,12 @@ def p_type_num(p):
              | sign_number
              | list_num
              | NUMBER
+             | HEX_NUM
     '''
-    p[0] = p[1]
+    if(p[1][:2]=="Hx" or p[1][:2]=="HX"):
+        p[0] = ('HEX', int(p[1][2:],16))
+    else:
+        p[0] = p[1]
 
 def p_list_num(p):
     '''

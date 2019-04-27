@@ -11,7 +11,7 @@ keywords = (
     'LE_OP', 'GE_OP', 'EQ_OP','LT_OP', 'GT_OP','MOD_OP', 'L_BRACKET', 'R_BRACKET', 'L_CURLYBRACKET', 
     'R_CURLYBRACKET',  'ASSIGN_OP', 
     'ADD_OP', 'MINUS_OP', 'MUL_OP', 'DIVIDE_OP',  'NUMBER', 
-    'L_SBRACKET', 'R_SBRACKET', 'QUEST','COMMA', 'ID','EXIT','RETURN', 'EOL', 'INF','STRING'
+    'HEX_NUM','L_SBRACKET', 'R_SBRACKET', 'QUEST','COMMA', 'ID','EXIT','RETURN', 'EOL', 'INF','STRING'
     # , 'HEX_NUMBER',, 'NEWLINE', 'SIGN_NUMBER' ,  'L_ANGLEBRACKET', 'R_ANGLEBRACKET', 'SEMI'  ,
 
 )
@@ -28,9 +28,12 @@ def t_NUMBER(t):
     t.value = int(t.value)
     return t
 
+def t_HEX_NUM(t):
+    r'[H][xX][0-9a-fA-F]+'
+    return t
 
 def t_ID(t):
-    r'[a-zA-Z][a-zA-Z0-9]*'
+    r'[_a-zA-Z][_a-zA-Z0-9]*'
     if t.value in keywords:
         t.type = t.value
     return t

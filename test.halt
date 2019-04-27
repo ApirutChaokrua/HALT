@@ -1,6 +1,6 @@
 
 
-VAR A <- ((5+2)*10) + (12-8)
+VAR A_ <- Hx1F + HxA
 
-
+VAR b[HxF]
 
