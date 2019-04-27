@@ -134,10 +134,14 @@ def p_exp_stm(p):
         | exp_stm MUL_OP exp_stm
         | exp_stm DIVIDE_OP exp_stm
         | exp_stm MOD_OP exp_stm
+        | L_BRACKET exp_stm R_BRACKET
         | type_num
     '''
     if(len(p) > 2):
-        p[0] = ('EXP', p[2], p[1], p[3])
+        if(p[1] == '('):
+            p[0] = ('PAREN',p[1],p[2],p[3])
+        else:
+            p[0] = ('EXP', p[2], p[1], p[3])
     else:
         p[0] = p[1]
 
