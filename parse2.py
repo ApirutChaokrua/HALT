@@ -65,8 +65,16 @@ def p_type_num(p):
              | sign_number
              | list_num
              | NUMBER
+             | HEX_NUM
     '''
-    p[0] = p[1]
+
+    if type(p[1]) is str:
+        if p[1][:2]=="Hx" or p[1][:2]=="HX":
+            p[0] = ('HEX', int(p[1][2:],16))
+        else:
+            p[0] = p[1]
+    else:
+        p[0] = p[1]
 
 def p_list_num(p):
     '''
@@ -134,10 +142,14 @@ def p_exp_stm(p):
         | exp_stm MUL_OP exp_stm
         | exp_stm DIVIDE_OP exp_stm
         | exp_stm MOD_OP exp_stm
+        | L_BRACKET exp_stm R_BRACKET
         | type_num
     '''
     if(len(p) > 2):
-        p[0] = ('EXP', p[2], p[1], p[3])
+        if(p[1] == '('):
+            p[0] = ('PAREN',p[1],p[2],p[3])
+        else:
+            p[0] = ('EXP', p[2], p[1], p[3])
     else:
         p[0] = p[1]
 

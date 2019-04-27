@@ -1,5 +1,6 @@
 
 
+<<<<<<< HEAD
 VAR A <- 5
 VAR V <- -2
 
@@ -8,5 +9,8 @@ SHOW("asd")
 
 VAR b <- 6
 
+=======
+VAR A_ <- 5 % 5 
+>>>>>>> bf5f0262cde70170ecf0fb84eb0229fee3811f95
 
 
