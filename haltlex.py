@@ -13,6 +13,29 @@ keywords = (
 tokens = keywords 
 
 t_ignore = ' \t\v\f'
+    
+t_COMMA = r'\,'
+t_LE_OP = r'<='
+t_GE_OP = r'>='
+t_LT_OP = r'<'
+t_GT_OP = r'>'
+t_EQ_OP = r'=='
+t_MOD_OP = r'%'
+t_R_BRACKET = r'\)'
+t_L_BRACKET = r'\('
+t_L_CURLYBRACKET = r'\{'
+t_R_CURLYBRACKET = r'\}'
+t_L_SBRACKET = r'\['
+t_R_SBRACKET = r'\]'
+t_ASSIGN_OP = r'<-'
+t_ADD_OP = r'\+'
+t_MINUS_OP = r'-'
+t_MUL_OP = r'\*'
+t_DIVIDE_OP = r'/'
+t_QUEST = r'\?'
+t_INF = r'INF'
+t_STRING = r'\".*?\"'
+
 
 def t_REM(t):
     r'REM .*'
@@ -33,27 +56,6 @@ def t_ID(t):
         t.type = t.value
     return t
 
-t_COMMA = r'\,'
-t_LE_OP = r'<='
-t_GE_OP = r'>='
-t_LT_OP = r'<'
-t_GT_OP = r'>'
-t_EQ_OP = r'=='
-t_MOD_OP = r'mod'
-t_R_BRACKET = r'\)'
-t_L_BRACKET = r'\('
-t_L_CURLYBRACKET = r'\{'
-t_R_CURLYBRACKET = r'\}'
-t_L_SBRACKET = r'\['
-t_R_SBRACKET = r'\]'
-t_ASSIGN_OP = r'<-'
-t_ADD_OP = r'\+'
-t_MINUS_OP = r'-'
-t_MUL_OP = r'\*'
-t_DIVIDE_OP = r'/'
-t_QUEST = r'\?'
-t_INF = r'INF'
-t_STRING = r'\".*?\"'
 
 # ---------------- Comment --------------------
 def t_COMMENT(t):

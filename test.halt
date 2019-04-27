@@ -1,6 +1,5 @@
 
 
-VAR A_ <- Hx1F + HxA
+VAR A_ <- 5 % 5 
 
-VAR b[HxF]
 
