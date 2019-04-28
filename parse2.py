@@ -2,14 +2,13 @@
 from ply import *
 import ply.yacc as yacc
 import haltlex
-
 tokens = haltlex.tokens
 
 precedence = (
     ('right', 'ASSIGN_OP'),
     ('left', 'ADD_OP', 'MINUS_OP'),
-    ('left', 'MUL_OP', 'DIVIDE_OP'),
-    ('left', 'LE_OP', 'GE_OP','EQ_OP'),
+    ('left', 'MUL_OP', 'DIVIDE_OP', 'MOD_OP'),
+    ('left', 'LE_OP', 'GE_OP', 'EQ_OP','LT_OP', 'GT_OP'),
 )
 
 # A HALT program is a series of statements.  We represent the program as a
@@ -45,8 +44,7 @@ def p_code_error(p):
 
 def p_stm(p):
     '''
-    stm : def_stm
-         | var_stm
+    stm : var_stm
          | assign_stm
          | if_stm
          | exp_stm
@@ -65,8 +63,16 @@ def p_type_num(p):
              | sign_number
              | list_num
              | NUMBER
+             | HEX_NUM
     '''
-    p[0] = p[1]
+
+    if type(p[1]) is str:
+        if p[1][:2]=="Hx" or p[1][:2]=="HX":
+            p[0] = ('HEX', int(p[1][2:],16))
+        else:
+            p[0] = p[1]
+    else:
+        p[0] = p[1]
 
 def p_list_num(p):
     '''
@@ -81,11 +87,11 @@ def p_set_num(p):
     if(len(p) > 2):
         p[0] = ('index', p[1], p[3])
 # DEFINE statement
-def p_def_stm(p):
-    '''
-    def_stm : DEF ID NUMBER
-    '''
-    p[0] = ('DEFINE', p[2], p[3])
+# def p_def_stm(p):
+#     '''
+#     def_stm : DEF ID NUMBER
+#     '''
+#     p[0] = ('DEFINE', p[2], p[3])
 # VAR statement
 def p_var_stm(p):
     '''
@@ -103,8 +109,6 @@ def p_var_stm_list(p):
     var_stm :  VAR ID L_SBRACKET type_num R_SBRACKET ASSIGN_OP L_CURLYBRACKET set_num R_CURLYBRACKET
             |  VAR ID L_SBRACKET type_num R_SBRACKET
     '''
-
-    print("array")
     if(len(p) == 6):
         p[0] = ('VAR_LIST', p[2], p[4], 'none')
     else :
@@ -134,10 +138,14 @@ def p_exp_stm(p):
         | exp_stm MUL_OP exp_stm
         | exp_stm DIVIDE_OP exp_stm
         | exp_stm MOD_OP exp_stm
+        | L_BRACKET exp_stm R_BRACKET
         | type_num
     '''
     if(len(p) > 2):
-        p[0] = ('EXP', p[2], p[1], p[3])
+        if(p[1] == '('):
+            p[0] = ('PAREN',p[1],p[2],p[3])
+        else:
+            p[0] = ('EXP', p[2], p[1], p[3])
     else:
         p[0] = p[1]
 
@@ -176,10 +184,10 @@ def p_condition_EQ(p):
 # LOOP statement
 def p_loop_stm(p):
     '''
-    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET EOL stm EOL R_CURLYBRACKET
-             | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET EOL stm EOL R_CURLYBRACKET
+    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET  stm  R_CURLYBRACKET
+             | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET  stm  R_CURLYBRACKET
     '''
-    p[0] = ('LOOP', p[3], p[7])
+    p[0] = ('LOOP', p[3], p[6])
 # SHOW statement
 def p_show_stm(p):
     '''
@@ -187,7 +195,7 @@ def p_show_stm(p):
              | SHOWLN
     '''
     if(len(p) == 5):
-        p[0] = ('SHOW', p[3])
+        p[0] = ('SHOW', p[3], None)
     else :
         p[0] = p[1]
 
