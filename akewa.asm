@@ -7,6 +7,8 @@ section .data
 _fmin db "%ld", 0
 A dq 5
 B dq 4
+_LC0 db "KUY", 0
+_LC1 db "FUCK", 0
 section .text
 _input:
 push rbp
@@ -21,6 +23,8 @@ leave
 ret
 main:
 push rbp
+mov rdi, _LC0
+mov rdi, _LC1
 mov rax, 0
 pop rbp
 ret
