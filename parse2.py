@@ -186,7 +186,7 @@ def p_show_stm(p):
              | SHOWLN
     '''
     if(len(p) == 5):
-        p[0] = ('SHOW', p[3])
+        p[0] = ('SHOW', p[3], None)
     else :
         p[0] = p[1]
 
