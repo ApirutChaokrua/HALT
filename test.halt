@@ -1,12 +1,7 @@
 
 
 VAR A <- 5
-
-
-SHOW("asd")
-
-
-VAR b <- 6
-
-
-
+VAR B <- 4
+SHOW("KUY")
+SHOW("FUCK")
+SHOW("WWW" + A)

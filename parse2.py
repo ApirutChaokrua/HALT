@@ -16,16 +16,16 @@ precedence = (
 # dictionary of tuples indexed by line number.
 def p_code(p):
     '''
-    code : code EOL stm 
-         | stm 
+    code : code EOL stm
+         | stm
     '''
     if len(p) == 4 :
         p[0] = ('MULTIPLE_LINE',p[1],p[3])
     else:
         p[0] = p[1]
-    
+
 def p_code2(p):
-    ''' 
+    '''
     stmSpace : stmSpace EOL code
              | EOL code
     '''
@@ -34,7 +34,7 @@ def p_code2(p):
     else:
         p[0] = p[2]
 
-    
+
 
 # This catch-all rule is used for any catastrophic errors.  In this case,
 # we simply return nothing
@@ -52,7 +52,7 @@ def p_stm(p):
          | exp_stm
          | loop_stm
          | show_stm
-         | stop 
+         | stop
          | return
          | empty
          | stmSpace
@@ -71,13 +71,13 @@ def p_type_num(p):
 def p_list_num(p):
     '''
     list_num : ID L_SBRACKET type_num R_SBRACKET
-    '''  
+    '''
     p[0] = ('LIST', p[1], p[3])
 def p_set_num(p):
     '''
     set_num : NUMBER COMMA set_num
             | NUMBER
-    '''   
+    '''
     if(len(p) > 2):
         p[0] = ('index', p[1], p[3])
 # DEFINE statement
@@ -91,17 +91,17 @@ def p_var_stm(p):
     '''
     var_stm : VAR ID ASSIGN_OP type_num
             | VAR ID ASSIGN_OP exp_stm
-            | VAR ID 
+            | VAR ID
     '''
     if(len(p) == 3):
         p[0] = ('VAR', p[2], '0')
     else :
         p[0] = ('VAR', p[2], p[4])
 
-def p_var_stm_list(p): 
-    ''' 
+def p_var_stm_list(p):
+    '''
     var_stm :  VAR ID L_SBRACKET type_num R_SBRACKET ASSIGN_OP L_CURLYBRACKET set_num R_CURLYBRACKET
-            |  VAR ID L_SBRACKET type_num R_SBRACKET 
+            |  VAR ID L_SBRACKET type_num R_SBRACKET
     '''
 
     print("array")
@@ -116,8 +116,8 @@ def p_assign_stm(p):
     '''
     assign_stm : ID ASSIGN_OP type_num
                | ID ASSIGN_OP exp_stm
-    ''' 
-    p[0] = ('ASSIGN', p[1], p[3]) 
+    '''
+    p[0] = ('ASSIGN', p[1], p[3])
 
 def p_exp_stm(p):
     # '''
@@ -128,7 +128,7 @@ def p_exp_stm(p):
     #      | factor
     # factor : type_num
     # '''
-    
+
     '''exp_stm : exp_stm ADD_OP exp_stm
         | exp_stm MINUS_OP exp_stm
         | exp_stm MUL_OP exp_stm
@@ -146,7 +146,7 @@ def p_if_stm(p):
     '''
     if_stm : IF condition QUEST L_CURLYBRACKET EOL stm  EOL R_CURLYBRACKET
            | IF condition QUEST L_CURLYBRACKET stm R_CURLYBRACKET
-  
+
     '''
     if(len(p) == 9):
         p[0] = ('IF', p[2], p[6])
@@ -167,7 +167,7 @@ def p_condition_less(p):
 
 def p_condition_great(p):
     '''condition : exp_stm GT_OP exp_stm'''
-    p[0] = ('GT_OP', p[1], p[3])    
+    p[0] = ('GT_OP', p[1], p[3])
 
 def p_condition_EQ(p):
     '''condition : exp_stm EQ_OP exp_stm'''
@@ -237,6 +237,9 @@ lines = open("test.halt", 'r').read()
 tree = hparser.parse(lines)
 print(tree)
 
+def getTree():
+    return tree
+
 
 # while True:
 #     try:
@@ -253,4 +256,3 @@ def parse(data, debug=0):
         print("hparser error")
         return None
     return p
-
