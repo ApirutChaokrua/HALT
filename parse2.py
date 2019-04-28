@@ -2,14 +2,13 @@
 from ply import *
 import ply.yacc as yacc
 import haltlex
-
 tokens = haltlex.tokens
 
 precedence = (
     ('right', 'ASSIGN_OP'),
     ('left', 'ADD_OP', 'MINUS_OP'),
-    ('left', 'MUL_OP', 'DIVIDE_OP'),
-    ('left', 'LE_OP', 'GE_OP','EQ_OP'),
+    ('left', 'MUL_OP', 'DIVIDE_OP', 'MOD_OP'),
+    ('left', 'LE_OP', 'GE_OP', 'EQ_OP','LT_OP', 'GT_OP'),
 )
 
 # A HALT program is a series of statements.  We represent the program as a
@@ -45,8 +44,7 @@ def p_code_error(p):
 
 def p_stm(p):
     '''
-    stm : def_stm
-         | var_stm
+    stm : var_stm
          | assign_stm
          | if_stm
          | exp_stm
@@ -89,11 +87,11 @@ def p_set_num(p):
     if(len(p) > 2):
         p[0] = ('index', p[1], p[3])
 # DEFINE statement
-def p_def_stm(p):
-    '''
-    def_stm : DEF ID NUMBER
-    '''
-    p[0] = ('DEFINE', p[2], p[3])
+# def p_def_stm(p):
+#     '''
+#     def_stm : DEF ID NUMBER
+#     '''
+#     p[0] = ('DEFINE', p[2], p[3])
 # VAR statement
 def p_var_stm(p):
     '''
@@ -111,8 +109,6 @@ def p_var_stm_list(p):
     var_stm :  VAR ID L_SBRACKET type_num R_SBRACKET ASSIGN_OP L_CURLYBRACKET set_num R_CURLYBRACKET
             |  VAR ID L_SBRACKET type_num R_SBRACKET 
     '''
-
-    print("array")
     if(len(p) == 6):
         p[0] = ('VAR_LIST', p[2], p[4], 'none')
     else :
@@ -128,15 +124,6 @@ def p_assign_stm(p):
     p[0] = ('ASSIGN', p[1], p[3]) 
 
 def p_exp_stm(p):
-    # '''
-    # exp_stm : exp_stm ADD_OP term
-    #         | exp_stm MINUS_OP term
-    # term : term MUL_OP factor
-    #      | term DIVIDE_OP factor
-    #      | factor
-    # factor : type_num
-    # '''
-    
     '''exp_stm : exp_stm ADD_OP exp_stm
         | exp_stm MINUS_OP exp_stm
         | exp_stm MUL_OP exp_stm
@@ -188,10 +175,10 @@ def p_condition_EQ(p):
 # LOOP statement
 def p_loop_stm(p):
     '''
-    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET EOL stm EOL R_CURLYBRACKET
-             | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET EOL stm EOL R_CURLYBRACKET
+    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET  stm  R_CURLYBRACKET
+             | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET  stm  R_CURLYBRACKET
     '''
-    p[0] = ('LOOP', p[3], p[7])
+    p[0] = ('LOOP', p[3], p[6])
 # SHOW statement
 def p_show_stm(p):
     '''
