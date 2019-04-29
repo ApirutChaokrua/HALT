@@ -6,7 +6,6 @@ global main
 section .data
 _fmin db "%ld", 0
 A dq 5
-B dq 4
 _LC0 db "KUY", 0
 _LC1 db "FUCK", 0
 section .text
