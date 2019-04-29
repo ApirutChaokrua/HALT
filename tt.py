@@ -332,7 +332,7 @@ def print_routine(fmt, arg):
     reg_c = 1
     while arg[1] != None:
         print("0")
-        if arg[0] == 'argument':
+        if arg[0] == 'RECURSIVE_MSG':
             print("1")
             a = arg[1]
             a_type = get_type(a)
