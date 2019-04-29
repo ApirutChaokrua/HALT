@@ -75,10 +75,7 @@ cmp_symbol = ['==', '!=', '>', '<', '>=', '<=', '&&']
 
 
 def get_type(symbol):
-    '''
-    I know this is stupid.
-    Just leave it alone.
-    '''
+
     if type(symbol) is tuple:
         if symbol[0] == 'array':
             return 'ARRAY'

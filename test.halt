@@ -1,6 +1,4 @@
 
 
 VAR A <- 5
-SHOW("KUY")
-SHOW("FUCK")
-SHOW("WWW" + A)
+SHOW(A)
