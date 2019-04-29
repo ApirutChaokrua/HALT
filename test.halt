@@ -1,1 +1,1 @@
-SHOW("123" + name2 + name3)
+SHOWLN()

@@ -189,20 +189,24 @@ def p_loop_stm(p):
     '''
     p[0] = ('LOOP', p[3], p[6])
 # SHOW statement
+def p_showln_stm(p):
+    '''
+    show_stm : SHOWLN L_BRACKET type_num rec_msg R_BRACKET
+             | SHOWLN L_BRACKET STRING rec_msg R_BRACKET
+             | SHOWLN L_BRACKET R_BRACKET
+    '''
+    if(len(p) == 6):
+        p[0] = ('SHOWLN', p[3], p[4])
+    else:
+        p[0] = ('SHOWLN', None, None)
+
 def p_show_stm(p):
     '''
     show_stm : SHOW L_BRACKET type_num rec_msg R_BRACKET
              | SHOW L_BRACKET STRING rec_msg R_BRACKET
-             
-             | SHOWLN
     '''
     if(len(p) == 6):
         p[0] = ('SHOW', p[3], p[4])
-    else :
-        p[0] = p[1]
-
-
-
 
 def p_show_rec_msg1(p):
     '''
