@@ -191,26 +191,39 @@ def p_loop_stm(p):
 # SHOW statement
 def p_show_stm(p):
     '''
-    show_stm : SHOW L_BRACKET msg R_BRACKET
+    show_stm : SHOW L_BRACKET type_num rec_msg R_BRACKET
+             | SHOW L_BRACKET STRING rec_msg R_BRACKET
+             
              | SHOWLN
     '''
-    if(len(p) == 5):
-        p[0] = ('SHOW', p[3], None)
+    if(len(p) == 6):
+        p[0] = ('SHOW', p[3], p[4])
     else :
         p[0] = p[1]
 
 
-def p_show_stm_msg(p):
+
+
+def p_show_rec_msg1(p):
     '''
-    msg : msg ADD_OP msg
-        | type_num
-        | STRING
-        | empty
+    rec_msg : ADD_OP rec_msg
+
     '''
-    if(len(p) == 4):
-        p[0] = ("CONCAT_MSG",p[1], p[3])
+    p[0] = p[2]
+
+
+def p_show_rec_msg(p):
+    '''
+    rec_msg : type_num rec_msg
+            | STRING rec_msg
+            | empty
+    '''
+
+    if(len(p) == 3):
+        p[0] = ("RECURSIVE_MSG",p[1], p[2])
     else :
-        p[0] = p[1]
+        p[0] = ("RECURSIVE_MSG", None, None)
+
 
 
 # EXIT statement
