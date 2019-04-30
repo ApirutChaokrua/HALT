@@ -8,11 +8,12 @@ Compiler Construction “Elementary Compiler” assignment
 Buid **cmd**
 
 ```
-  $ flex test.l
-  $ yacc -d test.y
-  $ gcc  -o test.exe  test.tab.c 
+  $ python ak.py
+	$ nasm -f win64 test.asm
+  $ gcc  -o test.exe  test.obj 
+  -----
 
-  $ test.exe code.txt
+  $ test.exe
 
 ```
 
@@ -39,7 +40,7 @@ A <- 1+2
 
 ## Acknowledgments
 
-* Flex
-* Bison
+* PLY
+* NASM
 * etc
 
