@@ -157,17 +157,24 @@ def declare_string(text):
         global_str_counter += 1
 
 
-def declare_arr(var_name, args):
+def declare_arr(var_name, args, index):
     global asmdata
+    print("VAR_ARRAY if")
     if var_name in global_var:
         print_error("Duplicate variable")
     else:
+        print("VAR_ARRAY else")
         global_var.append(var_name)
-        if args[0] == 'argument':
+        print(args)
+        if index[0] == 'index':
+            print("index")
             asmdata += "%s dq " % var_name
-            while args[1] != None:
-                asmdata += "%s ," % args[1]
-                args = args[2]
+            while index[1] != None:
+                asmdata += "%s ," % index[1]
+                if index[2] != 'None':
+                    index = index[2]
+                else:
+                    index[0]='None'
         else:
             # var array with size
             asmdata += "%s times %s dq 0" % (var_name, args)
@@ -223,19 +230,22 @@ def statement_main(stm):
             'assign': assign_routine,
             'SHOW': print_routine,
             'VAR': declare_var,
-            'var_array': declare_arr,
+            'VAR_LIST': declare_arr,
             'MULTIPLE_LINE': multiple_stm_routine,
             'if': if_routine,
             'ifelse': ifelse_routine,
-            'while': while_routine
+            'while': while_routine,
+            'VAR_LIST_VALUE': declare_arr,
         }
         func = switcher[state_symbol]
-        func(stm[1], stm[2])
+        if stm[0] == 'VAR_LIST' or stm[0] == 'VAR_LIST_VALUE':
+            func(stm[1],stm[2],stm[3])
+        else:
+            func(stm[1], stm[2])
     except SystemExit:
         sys.exit(1)
     except:
         pass
-
 
 def expression_main(exp, count=0):
     t = exp[0]
