@@ -245,7 +245,7 @@ def p_show_rec_str_msg(p):
     rec_msg : STRING recursive_str
     '''
     if(len(p) == 3):
-        p[0] = ("RECURSIVE_MSG",p[1], p[2])
+        p[0] = ("SHOW",p[1], p[2])
     else :
         p[0] = ("RECURSIVE_MSG", None, None)
 
@@ -263,7 +263,7 @@ def p_show_rec_var_msg2(p):
     rec_var_msg2 : rec_var_msg1
     '''
     if(len(p) == 2):
-        p[0] = ("RECURSIVE_MSG",'"[%ld]"', p[1])
+        p[0] = ("SHOW",'"[%ld]"', p[1])
     else :
         p[0] = ("RECURSIVE_MSG", None, None)
 
