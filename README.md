@@ -9,7 +9,7 @@ Buid **cmd**
 
 ```
   $ python ak.py
-	$ nasm -f win64 test.asm
+  $ nasm -f win64 test.asm
   $ gcc  -o test.exe  test.obj 
   -----
 
