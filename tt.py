@@ -29,7 +29,8 @@ asmtext = "section .text\n"
 asmdata = 'section .data\n'
 asmleave = 'mov rax, 0\npop rbp\nret\n'
 
-reg_order = ["rdi", "rsi", "rdx", "rcx"]
+# reg_order = ["rdi", "rsi", "rdx", "rcx"]
+reg_order = ["rdi", "rdx", "rdx", "rcx"]
 
 global_var = []
 
@@ -131,6 +132,7 @@ def declare_var(var_name, value=0):
             add_text("mov [%s], rax" % var_name)
         elif val_type == 'CONSTANT':
             asmdata += "%s dq %s\n" % (var_name, value)
+            print("CONSTANT")
         elif val_type == 'ARRAY':
             asmdata += "%s dq 0\n" % var_name
             assign_routine(var_name, value)
@@ -227,7 +229,7 @@ def statement_main(stm):
     try:
         state_symbol = stm[0]
         switcher = {
-            'assign': assign_routine,
+            'ASSIGN': assign_routine,
             'SHOW': print_routine,
             'VAR': declare_var,
             'VAR_LIST': declare_arr,
@@ -242,6 +244,7 @@ def statement_main(stm):
             func(stm[1],stm[2],stm[3])
         else:
             func(stm[1], stm[2])
+
     except SystemExit:
         sys.exit(1)
     except:
@@ -335,9 +338,9 @@ def input_routine():
 
 def print_routine(fmt, arg):
     print("PRINT+++++++++++++++")
-    add_text("mov rdi, " + get_str(fmt))
+    add_text("mov rcx, " + get_str(fmt))
     reg_c = 1
-    while arg[1] != None:
+    while arg[1] != None :
         if arg[0] == 'RECURSIVE_MSG':
             a = arg[1]
             a_type = get_type(a)
@@ -362,12 +365,17 @@ def print_routine(fmt, arg):
                 print("no Argument")
                 expression_main(arg[1])
                 add_text("mov %s, rax" % reg_order[reg_c])
+        if arg[0] == 'SHOW':
+            print("BREAK")
+            break
         reg_c += 1
         arg = arg[2]
     print("Call print I sus")
     add_text("call " + printf_label)
-    add_text("xor rdi, rdi")
+    add_text("xor rcx, rcx")
     add_text("call " + fflush_label)
+    if arg[0]=='SHOW':
+        print_routine(arg[1],arg[2])
 
 
 def assign_routine(dest, source):

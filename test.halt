@@ -1,2 +1,4 @@
 
-SHOW("AAA")
+VAR s <- 5
+s <- 1 + 2
+SHOW(s)
