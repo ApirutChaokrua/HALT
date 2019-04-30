@@ -5,9 +5,7 @@ extern fflush
 global main
 section .data
 _fmin db "%ld", 0
-A dq 5
-_LC0 db A, 0
-section .text
+A dq 5 ,2 ,section .text
 _input:
 push rbp
 mov rbp, rsp
@@ -21,10 +19,6 @@ leave
 ret
 main:
 push rbp
-mov rdi, _LC0
-call printf
-xor rdi, rdi
-call fflush
 mov rax, 0
 pop rbp
 ret

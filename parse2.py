@@ -112,9 +112,9 @@ def p_var_stm_list(p):
             |  VAR ID L_SBRACKET type_num R_SBRACKET
     '''
     if(len(p) == 6):
-        p[0] = ('VAR_LIST', p[2], p[4], 'none')
+        p[0] = ('VAR_LIST', p[2], str(p[4]), 'none')
     else :
-        p[0] = ('VAR_LIST_VALUE', p[2], p[4], p[8])
+        p[0] = ('VAR_LIST_VALUE', p[2], str(p[4]), p[8])
 
 
 # Assignment statement
@@ -196,8 +196,8 @@ def p_showln_var_stm(p):
     '''
     show_stm : SHOWLN L_BRACKET rec_var_msg1 R_BRACKET
     '''
-    p[0] = ('SHOWLN', '"[%ld]"', p[3])
-    
+    p[0] = ('SHOWLN', '"%ld"', p[3])
+
 
 def p_showln_str_stm(p):
     '''
@@ -257,7 +257,7 @@ def p_show_rec_var_msg1(p):
         p[0] = ("RECURSIVE_MSG",p[1], p[2])
     else :
         p[0] = ("RECURSIVE_MSG", None, None)
-        
+
 def p_show_rec_var_msg2(p):
     '''
     rec_var_msg2 : rec_var_msg1
@@ -266,7 +266,7 @@ def p_show_rec_var_msg2(p):
         p[0] = ("SHOW",'"[%ld]"', p[1])
     else :
         p[0] = ("RECURSIVE_MSG", None, None)
-        
+
 # EXIT statement
 def p_stop(p):
     '''stop : EXIT'''
