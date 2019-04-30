@@ -1,1 +1,8 @@
+<<<<<<< HEAD
 VAR A[5] <- {1,2}
+=======
+
+
+VAR A <- 5
+SHOW(A)
+>>>>>>> d2d3c4a5d4d3ee82f270d6f87b0efaa42f203981
