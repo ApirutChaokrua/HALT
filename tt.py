@@ -338,20 +338,15 @@ def print_routine(fmt, arg):
     add_text("mov rdi, " + get_str(fmt))
     reg_c = 1
     while arg[1] != None:
-        print("0")
         if arg[0] == 'RECURSIVE_MSG':
-            print("1")
             a = arg[1]
             a_type = get_type(a)
             if a_type == 'CONSTANT':
-                print("1.1")
                 add_text("mov %s, %s" % (reg_order[reg_c], a))
             elif a_type == 'ID':
-                print("1.2")
                 get_var(a)
                 add_text("mov %s, [%s]" % (reg_order[reg_c], a))
             elif a_type == 'ARRAY':
-                print("1.3")
                 index_type = get_type(a[2])
                 if index_type == 'ID':
                     get_var(a)
@@ -369,7 +364,6 @@ def print_routine(fmt, arg):
                 add_text("mov %s, rax" % reg_order[reg_c])
         reg_c += 1
         arg = arg[2]
-        print("555")
     print("Call print I sus")
     add_text("call " + printf_label)
     add_text("xor rdi, rdi")

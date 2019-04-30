@@ -1,1 +1,2 @@
-SHOW("ans" +n + "123" + a)
+
+SHOW("AAA" + "BBB")
