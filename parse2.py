@@ -201,7 +201,7 @@ def p_showln_var_stm(p):
 
 def p_showln_str_stm(p):
     '''
-    show_stm : SHOWLN L_BRACKET STRING recursive_str R_BRACKET
+    show_stm : SHOWLN L_BRACKET STRING recursive_str_showln R_BRACKET
     '''
     if(len(p) == 6):
         p[0] = ('SHOWLN', p[3], p[4])
@@ -234,6 +234,12 @@ def p_show_pass_rec_msg(p):
     recursive_var : ADD_OP rec_msg
                   | ADD_OP rec_var_msg2
                   | empty
+    recursive_str_showln : ADD_OP rec_msg_showln
+                         | ADD_OP rec_var_msg2_showln
+                         | empty
+    recursive_var_showln : ADD_OP rec_msg_showln
+                         | ADD_OP rec_var_msg2_showln
+                         | empty
     '''
     if(len(p) == 2):
         p[0] = p[0] = ("RECURSIVE_MSG", None, None)
@@ -266,6 +272,34 @@ def p_show_rec_var_msg2(p):
         p[0] = ("SHOW",'"[%ld]"', p[1])
     else :
         p[0] = ("RECURSIVE_MSG", None, None)
+
+def p_show_rec_str_msg_showln(p):
+    '''
+    rec_msg_showln : STRING recursive_str_showln
+    '''
+    if(len(p) == 3):
+        p[0] = ("SHOWLN",p[1], p[2])
+    else :
+        p[0] = ("RECURSIVE_MSG", None, None)
+
+def p_show_rec_var_msg1_showln(p):
+    '''
+    rec_var_msg1_showln : type_num recursive_var_showln
+    '''
+    if(len(p) == 3):
+        p[0] = ("RECURSIVE_MSG",p[1], p[2])
+    else :
+        p[0] = ("RECURSIVE_MSG", None, None)
+
+def p_show_rec_var_msg2_showln(p):
+    '''
+    rec_var_msg2_showln : rec_var_msg1_showln
+    '''
+    if(len(p) == 2):
+        p[0] = ("SHOWLN",'"[%ld]"', p[1])
+    else :
+        p[0] = ("RECURSIVE_MSG", None, None)
+
 
 # EXIT statement
 def p_stop(p):
