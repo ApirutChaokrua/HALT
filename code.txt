@@ -1,7 +1,0 @@
-a <- 1 + 20
-SHOW a
-b <- 1 + 2 * 3
-SHOW b
-c <- 1 + 2 / 1
-SHOW c
-exit
