@@ -23,7 +23,7 @@ def p_code(p):
     else:
         p[0] = p[1]
 
-def p_code2(p):
+def p_stmSpace(p):
     '''
     stmSpace : stmSpace EOL code
              | EOL code
@@ -86,6 +86,8 @@ def p_set_num(p):
     '''
     if(len(p) > 2):
         p[0] = ('index', p[1], p[3])
+    else:
+        p[0] = ('index', p[1], None)
 # DEFINE statement
 # def p_def_stm(p):
 #     '''
@@ -265,9 +267,6 @@ def p_show_rec_var_msg2(p):
     else :
         p[0] = ("RECURSIVE_MSG", None, None)
 
-
-
-
 # EXIT statement
 def p_stop(p):
     '''stop : EXIT'''
@@ -290,6 +289,7 @@ def p_empty(p):
 
 # error handler
 def p_error(p):
+    print(p)
     if not p:
         print("SYNTAX ERROR AT EOF")
     else:
@@ -312,10 +312,11 @@ def getTree():
 #     tree = hparser.parse(s)
 #     print(tree)
 
-def parse(data, debug=0):
-    hparser.error = 0
-    p = hparser.parse(data, debug=debug)
-    if hparser.error:
-        print("hparser error")
-        return None
-    return p
+# def parse(data, debug=0):
+#     print('EEOEOEOEOEO')
+#     hparser.error = 0
+#     p = hparser.parse(data, debug=debug)
+#     if hparser.error:
+#         print("hparser error")
+#         return None
+#     return p
