@@ -389,12 +389,14 @@ def assign_routine(dest, source):
     print("assign_routine")
     d_type = get_type(dest)
     s_type = get_type(source)
+    print(s_type)
     if s_type == 'CONSTANT':
         add_text('mov rax, ' + source)
     elif s_type == 'ID':
         get_var(source)
         add_text('mov rax, [%s]' % source)
     elif s_type == 'expression':
+        print("55555555")
         expression_main(source)
     elif s_type == 'INPUT':
         input_routine()
@@ -530,7 +532,7 @@ def minus_routine(a, b, count=0):
         error_token()
 
     count += 1
-    
+
     if b_type == 'CONSTANT':
         add_text("sub rax, %s" % b)
     elif b_type == 'ID':
