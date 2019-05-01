@@ -114,7 +114,7 @@ def p_expr_variable(p):
     p[0] = ('VAR', p[1])
 
 def p_expr_group(p):
-    '''expr : LPAREN expr RPAREN'''
+    '''expr : L_BRACKET expr R_BRACKET'''
     p[0] = ('GROUP', p[2])
 
 def p_expr_unary(p):
@@ -174,7 +174,7 @@ def p_command_stop(p):
 
 # DEF statement
 def p_command_def(p):
-    '''command : DEF ID LPAREN ID RPAREN EQUALS expr'''
+    '''command : DEF ID L_BRACKET ID R_BRACKET EQUALS expr'''
     p[0] = ('FUNC', p[2], p[4], p[7])
 
 
@@ -196,8 +196,8 @@ def p_relexpr(p):
 # Variables
 def p_variable(p):
     '''variable : ID
-              | ID LPAREN expr RPAREN
-              | ID LPAREN expr COMMA expr RPAREN'''
+              | ID L_BRACKET expr R_BRACKET
+              | ID L_BRACKET expr COMMA expr R_BRACKET'''
     if len(p) == 2:
         p[0] = (p[1], None, None)
     elif len(p) == 5:
