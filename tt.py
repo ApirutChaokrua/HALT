@@ -164,22 +164,20 @@ def declare_string(text):
 
 def declare_arr(var_name, args, index):
     global asmdata
-    print("VAR_ARRAY if")
     if var_name in global_var:
         print_error("Duplicate variable")
     else:
-        print("VAR_ARRAY else")
         global_var.append(var_name)
-        print(args)
         if index[0] == 'index':
-            print("index")
             asmdata += "%s dq " % var_name
-            while index[1] != None:
-                asmdata += "%s ," % index[1]
+            while index[2] != None:
+                asmdata += "%s" % index[1]
                 if index[2] != 'None':
+                    asmdata += ","
                     index = index[2]
                 else:
                     index[0]='None'
+            asmdata += "%s" % index[1]
         else:
             # var array with size
             asmdata += "%s times %s dq 0" % (var_name, args)
@@ -348,6 +346,7 @@ def input_routine():
 def print_routine(fmt, arg):
     add_text("mov rcx, " + get_str(fmt))
     reg_c = 1
+    print("print_routine")
     while arg[1] != None :
         if arg[0] == 'RECURSIVE_MSG':
             a = arg[1]
@@ -357,7 +356,8 @@ def print_routine(fmt, arg):
             elif a_type == 'ID':
                 get_var(a)
                 add_text("mov %s, [%s]" % (reg_order[reg_c], a))
-            elif a_type == 'ARRAY':
+            elif a_type == 'expression':
+                # print("print ARRAY")
                 index_type = get_type(a[2])
                 if index_type == 'ID':
                     get_var(a)
