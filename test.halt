@@ -1,3 +1,4 @@
-VAR c
-c <- -((5+5)*2)+2
-SHOW("Value:" + c)
+VAR c <- 5-3
+VAR b <- 5-3+2*(21-1)
+c <- 5+b*0
+SHOW("Value:" + c+" "+b)

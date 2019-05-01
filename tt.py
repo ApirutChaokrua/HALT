@@ -135,6 +135,10 @@ def declare_var(var_name, value=0):
         elif val_type == 'ARRAY':
             asmdata += "%s dq 0\n" % var_name
             assign_routine(var_name, value)
+        elif val_type == 'expression':
+            asmdata += "%s dq 0\n" % var_name
+            statement_main( ('ASSIGN', var_name, value ))
+            print("VAR CONSTANT")
         else:
             print_error('Declare variable with unsupport type.',
                         show_line=False)
