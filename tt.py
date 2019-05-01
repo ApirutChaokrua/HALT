@@ -254,7 +254,6 @@ def statement_main(stm):
 
 def expression_main(exp, count=0):
 
-    print("def expression_main"+exp[1])
     t = exp[1]
     if t in cmp_symbol:
         cmp_main(exp)
@@ -268,12 +267,10 @@ def expression_main(exp, count=0):
             '(': paren_routine
         }
         
-        print(exp)
         func = switcher[t]
         if t=='(' and get_type(exp[2])=='CONSTANT':
             paren_alone_routine(exp[2])
         elif t=='(' and exp[0]=='MINUS_PAREN':
-            print("okkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
             minus_routine(0,exp[2])
             
         elif t=='(':
@@ -386,7 +383,7 @@ def print_routine(fmt, arg):
                 expression_main(arg[1])
                 add_text("mov %s, rax" % reg_order[reg_c])
         if arg[0] == 'SHOW':
-            print("BREAK")
+            print("BREAK")  
             break
         reg_c += 1
         arg = arg[2]
@@ -398,7 +395,6 @@ def print_routine(fmt, arg):
 
 
 def assign_routine(dest, source):
-    print("assign_routine")
     d_type = get_type(dest)
     s_type = get_type(source)
     if s_type == 'CONSTANT':
@@ -407,7 +403,6 @@ def assign_routine(dest, source):
         get_var(source)
         add_text('mov rax, [%s]' % source)
     elif s_type == 'expression':
-        print("55555555")
         expression_main(source)
     elif s_type == 'INPUT':
         input_routine()
@@ -441,7 +436,6 @@ def assign_routine(dest, source):
 
 
 def plus_routine(a, b, count=0):
-    print("plus_routine",a,b)
     a_type = get_type(a)
     b_type = get_type(b)
     if a_type == 'CONSTANT':
@@ -505,7 +499,6 @@ def plus_routine(a, b, count=0):
 
 def minus_routine(a, b, count=0):
     global asmtext
-    print("minus_routine",a,b)
     a_type = get_type(a)
     b_type = get_type(b)
     if a_type == 'CONSTANT':
@@ -570,7 +563,6 @@ def minus_routine(a, b, count=0):
 
 
 def multiply_routine(a, b, count=0):
-    print("multiply_routine",a,b)
     a_type = get_type(a)
     b_type = get_type(b)
     if a_type == 'CONSTANT':
