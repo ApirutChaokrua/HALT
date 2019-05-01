@@ -390,11 +390,12 @@ def assign_routine(dest, source):
     d_type = get_type(dest)
     s_type = get_type(source)
     if s_type == 'CONSTANT':
-        add_text('mov rax, ' + source)
+        add_text('mov rax, ' + str(source))
     elif s_type == 'ID':
         get_var(source)
         add_text('mov rax, [%s]' % source)
     elif s_type == 'expression':
+        print("55555555")
         expression_main(source)
     elif s_type == 'INPUT':
         input_routine()
@@ -471,7 +472,10 @@ def plus_routine(a, b, count=0):
         get_var(b)
         add_text("add rax, [%s]" % b)
     elif b_type == 'expression':
+        add_text("push rax")
         expression_main(b, count)
+        add_text("pop rbx")
+        add_text("add rax,rbx")
     elif b_type == 'ARRAY':
         index_type = get_type(b[2])
         if index_type == 'ID':
@@ -527,7 +531,7 @@ def minus_routine(a, b, count=0):
         error_token()
 
     count += 1
-    
+
     if b_type == 'CONSTANT':
         add_text("sub rax, %s" % b)
     elif b_type == 'ID':
@@ -535,8 +539,8 @@ def minus_routine(a, b, count=0):
         add_text("sub rax, [%s]" % b)
     elif b_type == 'expression':
         expression_main(b, count)
-        add_text("pop rbx")
-        add_text('add rax, rbx')
+        # add_text("pop rbx")
+        # add_text('add rax, rbx')
     elif b_type == 'ARRAY':
         index_type = get_type(b[2])
         if index_type == 'ID':
@@ -593,8 +597,8 @@ def multiply_routine(a, b, count=0):
 
     if b_type == 'CONSTANT':
         add_text("imul rax, %s" % b)
-        add_text("pop rbx")
-        add_text('add rax, rbx')
+        # add_text("pop rbx")
+        # add_text('add rax, rbx')
     elif b_type == 'ID':
         get_var(b)
         add_text("imul rax, [%s]" % b)
