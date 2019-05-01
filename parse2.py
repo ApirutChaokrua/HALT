@@ -6,8 +6,8 @@ tokens = haltlex.tokens
 
 precedence = (
     ('right', 'ASSIGN_OP'),
-    ('left', 'ADD_OP', 'MINUS_OP'),
     ('left', 'MUL_OP', 'DIVIDE_OP', 'MOD_OP'),
+    ('left', 'ADD_OP', 'MINUS_OP'),
     ('left', 'LE_OP', 'GE_OP', 'EQ_OP','LT_OP', 'GT_OP'),
 )
 
@@ -141,13 +141,16 @@ def p_exp_stm(p):
         | exp_stm DIVIDE_OP exp_stm
         | exp_stm MOD_OP exp_stm
         | L_BRACKET exp_stm R_BRACKET
+        | MINUS_OP L_BRACKET exp_stm R_BRACKET
         | type_num
     '''
-    if(len(p) > 2):
+    if(len(p) == 4):
         if(p[1] == '('):
             p[0] = ('PAREN',p[1],p[2],p[3])
         else:
             p[0] = ('EXP', p[2], p[1], p[3])
+    elif(len(p) == 5):
+        p[0] = ('MINUS_PAREN', p[2], p[3], p[4])
     else:
         p[0] = p[1]
 
