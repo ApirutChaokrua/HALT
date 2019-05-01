@@ -389,9 +389,8 @@ def assign_routine(dest, source):
     print("assign_routine")
     d_type = get_type(dest)
     s_type = get_type(source)
-    print(s_type)
     if s_type == 'CONSTANT':
-        add_text('mov rax, ' + source)
+        add_text('mov rax, ' + str(source))
     elif s_type == 'ID':
         get_var(source)
         add_text('mov rax, [%s]' % source)
