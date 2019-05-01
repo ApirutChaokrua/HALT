@@ -6,8 +6,8 @@ tokens = haltlex.tokens
 
 precedence = (
     ('right', 'ASSIGN_OP'),
-    ('left', 'ADD_OP', 'MINUS_OP'),
     ('left', 'MUL_OP', 'DIVIDE_OP', 'MOD_OP'),
+    ('left', 'ADD_OP', 'MINUS_OP'),
     ('left', 'LE_OP', 'GE_OP', 'EQ_OP','LT_OP', 'GT_OP'),
 )
 
