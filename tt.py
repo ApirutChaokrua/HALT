@@ -471,7 +471,10 @@ def plus_routine(a, b, count=0):
         get_var(b)
         add_text("add rax, [%s]" % b)
     elif b_type == 'expression':
+        add_text("push rax")
         expression_main(b, count)
+        add_text("pop rbx")
+        add_text("add rax,rbx")
     elif b_type == 'ARRAY':
         index_type = get_type(b[2])
         if index_type == 'ID':
@@ -535,8 +538,8 @@ def minus_routine(a, b, count=0):
         add_text("sub rax, [%s]" % b)
     elif b_type == 'expression':
         expression_main(b, count)
-        add_text("pop rbx")
-        add_text('add rax, rbx')
+        # add_text("pop rbx")
+        # add_text('add rax, rbx')
     elif b_type == 'ARRAY':
         index_type = get_type(b[2])
         if index_type == 'ID':
@@ -593,8 +596,8 @@ def multiply_routine(a, b, count=0):
 
     if b_type == 'CONSTANT':
         add_text("imul rax, %s" % b)
-        add_text("pop rbx")
-        add_text('add rax, rbx')
+        # add_text("pop rbx")
+        # add_text('add rax, rbx')
     elif b_type == 'ID':
         get_var(b)
         add_text("imul rax, [%s]" % b)
