@@ -30,7 +30,7 @@ asmdata = 'section .data\n'
 asmleave = 'mov rax, 0\npop rbp\nret\n'
 
 # reg_order = ["rdi", "rsi", "rdx", "rcx"]
-reg_order = ["rdi", "rdx", "rdx", "rcx"]
+reg_order = ["rcx", "rdx", "r8", "r9"]
 
 global_var = []
 
@@ -54,18 +54,18 @@ def add_text(cmd):
 
 # init
 # sys_input
-add_data("_fmin", "\"%ld\", 0")
-add_text("_input:")
-add_text("push rbp")
-add_text("mov rbp, rsp")
-add_text("sub rsp, 16")
-add_text("lea rax, [rbp - 8]")
-add_text("mov rsi, rax")
-add_text("mov rdi, _fmin")
-add_text("call " + scanf_label)
-add_text("mov rax, [rbp - 8]")
-add_text("leave")
-add_text("ret")
+# add_data("_fmin", "\"%ld\", 0")
+# add_text("_input:")
+# add_text("push rbp")
+# add_text("mov rbp, rsp")
+# add_text("sub rsp, 16")
+# add_text("lea rax, [rbp - 8]")
+# add_text("mov rsi, rax")
+# add_text("mov rdi, _fmin")
+# add_text("call " + scanf_label)
+# add_text("mov rax, [rbp - 8]")
+# add_text("leave")
+# add_text("ret")
 
 # add main label
 add_text(main_entry)
@@ -251,7 +251,9 @@ def statement_main(stm):
         pass
 
 def expression_main(exp, count=0):
-    t = exp[0]
+
+    print("def expression_main"+exp[1])
+    t = exp[1]
     if t in cmp_symbol:
         cmp_main(exp)
     else:
@@ -260,12 +262,18 @@ def expression_main(exp, count=0):
             '-': minus_routine,
             '*': multiply_routine,
             '/': divide_routine,
-            '%': mod_routine
+            '%': mod_routine,
+            '(': paren_routine
         }
 
         func = switcher[t]
-        func(exp[1], exp[2], count)
+        if t=='(':
+            func(exp[2],count)
+        else:
+            func(exp[2], exp[3], count)
 
+def paren_routine(a,count=0):
+    expression_main(a,count)
 
 def cmp_main(cmp_e):
     global global_if_counter
@@ -370,7 +378,6 @@ def print_routine(fmt, arg):
             break
         reg_c += 1
         arg = arg[2]
-    print("Call print I sus")
     add_text("call " + printf_label)
     add_text("xor rcx, rcx")
     add_text("call " + fflush_label)
@@ -379,6 +386,7 @@ def print_routine(fmt, arg):
 
 
 def assign_routine(dest, source):
+    print("assign_routine")
     d_type = get_type(dest)
     s_type = get_type(source)
     if s_type == 'CONSTANT':
@@ -420,13 +428,14 @@ def assign_routine(dest, source):
 
 
 def plus_routine(a, b, count=0):
+    print("plus_routine",a,b)
     a_type = get_type(a)
     b_type = get_type(b)
     if a_type == 'CONSTANT':
         if count == 0:
             add_text("mov rax, %s" % a)
         else:
-            add_text("add rax, " + a)
+            add_text("add rax, %s" % a)
     elif a_type == 'ID':
         get_var(a)
         if count == 0:
@@ -454,10 +463,10 @@ def plus_routine(a, b, count=0):
                 add_text('add rax, [%s + %s * 8]' % (a[1], a[2]))
     else:
         error_token()
-    count += 1
 
+    count += 1
     if b_type == 'CONSTANT':
-        add_text("add rax, " + b)
+        add_text("add rax, %s" % b)
     elif b_type == 'ID':
         get_var(b)
         add_text("add rax, [%s]" % b)
@@ -478,15 +487,17 @@ def plus_routine(a, b, count=0):
     else:
         error_token()
 
-
 def minus_routine(a, b, count=0):
+    global asmtext
+    print("minus_routine",a,b)
     a_type = get_type(a)
     b_type = get_type(b)
     if a_type == 'CONSTANT':
         if count == 0:
-            add_text("mov rax," + a)
+            add_text("mov rax, %s" % a)
         else:
-            add_text("sub rax, " + a)
+            add_text("push rax")
+            add_text("mov rax, %s" % a)
     elif a_type == 'ID':
         get_var(a)
         if count == 0:
@@ -516,14 +527,16 @@ def minus_routine(a, b, count=0):
         error_token()
 
     count += 1
-
+    
     if b_type == 'CONSTANT':
-        add_text("sub rax, " + b)
+        add_text("sub rax, %s" % b)
     elif b_type == 'ID':
         get_var(b)
         add_text("sub rax, [%s]" % b)
     elif b_type == 'expression':
         expression_main(b, count)
+        add_text("pop rbx")
+        add_text('add rax, rbx')
     elif b_type == 'ARRAY':
         index_type = get_type(b[2])
         if index_type == 'ID':
@@ -540,13 +553,15 @@ def minus_routine(a, b, count=0):
 
 
 def multiply_routine(a, b, count=0):
+    print("multiply_routine",a,b)
     a_type = get_type(a)
     b_type = get_type(b)
     if a_type == 'CONSTANT':
         if count == 0:
-            add_text("mov rax," + a)
+            add_text("mov rax, %s" % a)
         else:
-            add_text("imul rax, " + a)
+            add_text("push rax")
+            add_text("mov rax, %s" % a)
     elif a_type == 'ID':
         get_var(a)
         if count == 0:
@@ -578,11 +593,15 @@ def multiply_routine(a, b, count=0):
 
     if b_type == 'CONSTANT':
         add_text("imul rax, %s" % b)
+        add_text("pop rbx")
+        add_text('add rax, rbx')
     elif b_type == 'ID':
         get_var(b)
         add_text("imul rax, [%s]" % b)
     elif b_type == 'expression':
         expression_main(b, count)
+        add_text("pop rbx")
+        add_text('imul rax, rbx')
     elif b_type == 'ARRAY':
         index_type = get_type(b[2])
         if index_type == 'ID':
@@ -604,9 +623,9 @@ def divide_routine(a, b, count=0):
     add_text('xor rdx, rdx')
     if a_type == 'CONSTANT':
         if count == 0:
-            add_text('mov rax, ' + a)
+            add_text("mov rax,  %s" % a)
         else:
-            add_text('mov rcx, ' + a)
+            add_text("mov rcx,  %s" % a)
             add_text('idiv rcx')
     elif a_type == 'ID':
         get_var(a)
@@ -673,9 +692,9 @@ def mod_routine(a, b, count=0):
     add_text('xor rdx, rdx')
     if a_type == 'CONSTANT':
         if count == 0:
-            add_text('mov rax, ' + a)
+            add_text("mov rax,  %s" % a)
         else:
-            add_text('mov rcx, ' + a)
+            add_text("mov rcx,  %s" % a)
             add_text('idiv rcx')
             add_text('mov rax, rdx')
     elif a_type == 'ID':
