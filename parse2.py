@@ -46,6 +46,7 @@ def p_stm(p):
     '''
     stm : var_stm
          | assign_stm
+         | assign_list_stm
          | if_stm
          | exp_stm
          | loop_stm
@@ -125,6 +126,16 @@ def p_assign_stm(p):
     '''
     p[0] = ('ASSIGN', p[1], p[3])
 
+# Assignment statement
+def p_assign_list_stm(p):
+    '''
+    assign_list_stm : list_num ASSIGN_OP exp_stm
+                    | list_num ASSIGN_OP type_num
+    '''
+    p[0] = ('ASSIGN_LIST', p[1], p[3])
+
+
+
 def p_exp_stm(p):
     # '''
     # exp_stm : exp_stm ADD_OP term
@@ -193,8 +204,8 @@ def p_loop_stm(p):
              | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET  stm  R_CURLYBRACKET
     '''
     p[0] = ('LOOP', p[3], p[6])
+    
 # SHOW statement
-
 def p_showln_var_stm(p):
     '''
     show_stm : SHOWLN L_BRACKET rec_var_msg1 R_BRACKET

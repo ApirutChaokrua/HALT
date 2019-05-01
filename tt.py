@@ -34,6 +34,15 @@ reg_order = ["rcx", "rdx", "r8", "r9"]
 
 global_var = []
 
+var_loop = ["_VL1" , "_VL2", "_VL3"]
+fun_loop = ["_L1","_L2","_L3"]
+nvl = -1
+nfl = -1
+
+asmdata += "%s dq %s\n" % (var_loop[0], 0)
+asmdata += "%s dq %s\n" % (var_loop[1], 0)
+asmdata += "%s dq %s\n" % (var_loop[2], 0)
+
 global_str_counter = 0
 global_str = {}
 global_if_counter = 0
@@ -78,10 +87,10 @@ cmp_symbol = ['==', '!=', '>', '<', '>=', '<=', '&&']
 def get_type(symbol):
 
     if type(symbol) is tuple:
-        if symbol[0] == 'array':
+        if symbol[0] == 'LIST':
             return 'ARRAY'
         return 'expression'
-    if symbol == 'array':
+    if symbol == 'LIST':
         return 'ARRAY'
     if symbol == 'input':
         return 'INPUT'
@@ -135,7 +144,7 @@ def declare_var(var_name, value=0):
         elif val_type == 'ARRAY':
             asmdata += "%s dq 0\n" % var_name
             assign_routine(var_name, value)
-        elif val_type == 'expression':
+        elif val_type == 'ARRAY':
             asmdata += "%s dq 0\n" % var_name
             statement_main( ('ASSIGN', var_name, value ))
             print("VAR CONSTANT")
@@ -212,8 +221,30 @@ def else_routine(stm):
     add_text("_L%d:" % global_if_counter)
 
 
-def LOOP_routing(exp, stm):
-    print("LOOP")
+def loop_routing(exp, stm):
+    global nvl,nfl,var_loop,fun_loop
+    print(var_loop[0])
+    nvl+=1
+    nfl+=1
+    if(exp != 'INF'):
+        add_text("mov rcx, %d" % (exp))
+        add_text("mov [%s], rcx" % (var_loop[nvl]))
+        add_text("%s:" % (fun_loop[nfl]))
+
+        if stm != None:
+            statement_main(stm)
+
+        add_text("mov rcx, [%s]"% (var_loop[nvl]))
+        add_text("dec rcx")
+        add_text("mov [%s], rcx"% (var_loop[nvl]))
+        add_text("cmp rcx, 0")
+        add_text("je %sEX"% (fun_loop[nfl]))
+        add_text("jmp %s"% (fun_loop[nfl]))
+        add_text("%sEX:"% (fun_loop[nfl]))
+        fun_loop[nfl]='_'+fun_loop[nfl]
+    nvl=nvl-1
+    nfl=nfl-1
+    print("END LOOP")
 
 
 def statement_main(stm):
@@ -221,13 +252,14 @@ def statement_main(stm):
         state_symbol = stm[0]
         switcher = {
             'ASSIGN': assign_routine,
+            'ASSIGN_LIST': assign_routine,
             'SHOW': print_routine,
             'VAR': declare_var,
             'VAR_LIST': declare_arr,
             'MULTIPLE_LINE': multiple_stm_routine,
             'if': if_routine,
             'ifelse': ifelse_routine,
-            'LOOP': LOOP_routing,
+            'LOOP': loop_routing,
             'VAR_LIST_VALUE': declare_arr,
         }
         func = switcher[state_symbol]
@@ -255,13 +287,13 @@ def expression_main(exp, count=0):
             '%': mod_routine,
             '(': paren_routine
         }
-        
+
         func = switcher[t]
         if t=='(' and get_type(exp[2])=='CONSTANT':
             paren_alone_routine(exp[2])
         elif t=='(' and exp[0]=='MINUS_PAREN':
             minus_routine(0,exp[2])
-            
+
         elif t=='(':
             func(exp[2],0)
 
@@ -356,14 +388,15 @@ def print_routine(fmt, arg):
             elif a_type == 'ID':
                 get_var(a)
                 add_text("mov %s, [%s]" % (reg_order[reg_c], a))
-            elif a_type == 'expression':
-                # print("print ARRAY")
+            elif a_type == 'ARRAY':
+                
                 index_type = get_type(a[2])
+                print("print ARRAY",a[2])
                 if index_type == 'ID':
-                    get_var(a)
-                    add_text('mov rbx, %s' % a[1])
+                    get_var(a[1])
                     add_text('mov rcx, [%s]' % a[2])
                     add_text('imul rcx, 8')
+                    add_text('mov rbx, %s' % a[1])
                     add_text('add rbx, rcx')
                     add_text('mov %s, [rbx]' % reg_order[reg_c])
                 elif index_type == 'CONSTANT':
@@ -374,10 +407,11 @@ def print_routine(fmt, arg):
                 expression_main(arg[1])
                 add_text("mov %s, rax" % reg_order[reg_c])
         if arg[0] == 'SHOW':
-            print("BREAK")  
+            print("BREAK")
             break
         reg_c += 1
         arg = arg[2]
+
     add_text("call " + printf_label)
     add_text("xor rcx, rcx")
     add_text("call " + fflush_label)
@@ -388,6 +422,7 @@ def print_routine(fmt, arg):
 def assign_routine(dest, source):
     d_type = get_type(dest)
     s_type = get_type(source)
+    print(d_type)
     if s_type == 'CONSTANT':
         add_text('mov rax, ' + str(source))
     elif s_type == 'ID':
@@ -743,7 +778,7 @@ def mod_routine(a, b, count=0):
         add_text('mov rcx, [%s]' % b)
         add_text('idiv rcx')
         add_text('mov rax, rdx')
-    elif b_type == 'expression':      
+    elif b_type == 'expression':
         add_text("push rax")
         expression_main(b, count)
         add_text("mov rcx, rax")
