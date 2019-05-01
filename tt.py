@@ -263,12 +263,18 @@ def expression_main(exp, count=0):
             '%': mod_routine,
             '(': paren_routine
         }
-
+        
+        print(exp)
         func = switcher[t]
         if t=='(' and get_type(exp[2])=='CONSTANT':
             paren_alone_routine(exp[2])
+        elif t=='(' and exp[0]=='MINUS_PAREN':
+            print("okkkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+            minus_routine(0,exp[2])
+            
         elif t=='(':
             func(exp[2],0)
+
         else:
             func(exp[2], exp[3], count)
 
