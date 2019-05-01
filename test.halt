@@ -1,5 +1,3 @@
 
-VAR s <- 5
-s <- 6 + 9
-s <- 1
-SHOW(s)
+
+SHOW("as")
