@@ -1,5 +1,4 @@
 
 VAR s <- 5
-SHOW(s)
-s <- 10
+
 SHOW(s)
