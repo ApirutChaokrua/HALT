@@ -214,18 +214,9 @@ def else_routine(stm):
     add_text("_L%d:" % global_if_counter)
 
 
-def while_routine(exp, stm):
-    global global_if_counter
-    loop_c = global_if_counter
-    exit_c = loop_c + 1
-    add_text("_L%d:" % loop_c)
-    global_if_counter += 1
-    expression_main(exp)
-    global_if_counter += 1
-    statement_main(stm)
-    add_text("jmp _L%d" % loop_c)
-    add_text("_L%d:" % exit_c)
-    global_if_counter += 1
+def LOOP_routing(exp, stm):
+    print("LOOP")
+
 
 def statement_main(stm):
     try:
@@ -238,7 +229,7 @@ def statement_main(stm):
             'MULTIPLE_LINE': multiple_stm_routine,
             'if': if_routine,
             'ifelse': ifelse_routine,
-            'while': while_routine,
+            'LOOP': LOOP_routing,
             'VAR_LIST_VALUE': declare_arr,
         }
         func = switcher[state_symbol]
@@ -400,7 +391,6 @@ def assign_routine(dest, source):
     if s_type == 'CONSTANT':
         add_text('mov rax, ' + str(source))
     elif s_type == 'ID':
-        get_var(source)
         add_text('mov rax, [%s]' % source)
     elif s_type == 'expression':
         expression_main(source)
