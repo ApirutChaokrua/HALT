@@ -34,6 +34,7 @@ asmleave = 'mov rax, 0\npop rbp\nret\n'
 reg_order = ["rcx", "rdx", "r8", "r9"]
 
 global_var = []
+global_arr = []
 
 var_loop = ["_VL1" , "_VL2", "_VL3","_VL4","_VL5"]
 fun_loop = ["_L1","_L2","_L3","_L4","_L5"]
@@ -41,7 +42,7 @@ nvl = -1
 nfl = -1
 chBreak = "chbreak"
 
-asmdata += "%s dq %s\n" % (chBreak, 1)
+# asmdata += "%s dq %s\n" % (chBreak, 1)
 asmdata += "%s dq %s\n" % (var_loop[0], 0)
 asmdata += "%s dq %s\n" % (var_loop[1], 0)
 asmdata += "%s dq %s\n" % (var_loop[2], 0)
@@ -85,7 +86,7 @@ add_text(main_entry)
 add_text("push rbp")
 
 
-cmp_symbol = ['==', '!=', '>', '<', '>=', '<=', '&&']
+cmp_symbol = ['EQ_OP', '!=', 'GI_OP', 'LI_OP', 'GE_OP', 'LE_OP', '&&']
 
 
 def get_type(symbol):
@@ -109,6 +110,12 @@ def get_var(symbol):
     if symbol in global_var:
         return symbol
     print_error("Use of undeclare variable %s" % symbol)
+
+def get_arr(ID,num):
+    for i in global_arr :
+        if (i[0]==ID and num>=0 and num<int(i[1])):
+                return ID
+    print_error("out of range %s" % ID)
 
 
 def get_str(text):
@@ -203,8 +210,9 @@ def declare_arr(var_name, args, index):
         else:
             # var array with size
             asmdata += "%s times %s dq 0" % (var_name, args)
-
+        global_arr.append([var_name,args])
         asmdata += '\n'
+        print(global_arr)
 
 
 def multiple_stm_routine(stm1, stm2):
@@ -224,8 +232,8 @@ def if_routine(exp, stm, iselse=False):
     expression_main(exp)
     statement_main(stm)
     if iselse:
-        add_text("jmp _L%d" % (global_if_counter + 1))
-    add_text("_L%d:" % exit_c)
+        add_text("jmp _IF%d" % (global_if_counter + 1))
+    add_text("_IF%d:" % exit_c)
 
 
 def else_routine(stm):
@@ -271,10 +279,8 @@ def loop_routing(exp, stm):
 
     nvl=nvl-1
     nfl=nfl-1
-    print("END LOOP")
 
 def break_loop():
-    print("BREAKKKKKKKK")
     global nvl,nfl,var_loop,fun_loop,chBreak
     # add_text("mov [%s], 0"% (chBreak))
     # add_text("mov rcx, [%s]"% (chBreak))
@@ -294,7 +300,7 @@ def statement_main(stm):
             'VAR': declare_var,
             'VAR_LIST': declare_arr,
             'MULTIPLE_LINE': multiple_stm_routine,
-            'if': if_routine,
+            'IF': if_routine,
             'ifelse': ifelse_routine,
             'LOOP': loop_routing,
             'VAR_LIST_VALUE': declare_arr,
@@ -314,8 +320,9 @@ def statement_main(stm):
         pass
 
 def expression_main(exp, count=0):
-
+    print(exp[0])
     t = exp[1]
+    e = exp[0]
     if t in cmp_symbol:
         cmp_main(exp)
     else:
@@ -405,11 +412,11 @@ def cmp_main(cmp_e):
     if t != '&&':
         add_text("cmp rax, rbx")
     switcher = {
-        '==': equal_routine,
-        '>': greater_routine,
-        '<': less_routine,
-        '<=': less_equ_routine,
-        '>=': greater_equ_routine,
+        'EQ_OP': equal_routine,
+        'GI_OP': greater_routine,
+        'LI_OP': less_routine,
+        'LE_OP': less_equ_routine,
+        'GE_OP': greater_equ_routine,
         '&&': and_routine
     }
     func = switcher[t]
@@ -433,13 +440,14 @@ def print_routine(fmt, arg):
                 get_var(a)
                 add_text("mov %s, [%s]" % (reg_order[reg_c], a))
             elif a_type == 'ARRAY':
-
+                get_var(a[1])
                 index_type = get_type(a[2])
                 if index_type == 'ID':
-                    get_var(a[1])
+                    get_var(a[2])
                     add_text('mov rbx, [%s]' % a[2])
                     add_text('mov %s, [%s+rbx*8]' % (reg_order[reg_c],a[1]))
                 elif index_type == 'CONSTANT':
+                    get_arr(a[1],a[2])
                     add_text('mov %s, [%s + %s * 8]' %
                              (reg_order[reg_c], a[1], a[2]))
             else:
@@ -460,12 +468,14 @@ def print_routine(fmt, arg):
 
 
 def assign_routine(dest, source):
+    global global_var
     d_type = get_type(dest)
     s_type = get_type(source)
     # print(d_type)
     if s_type == 'CONSTANT':
         add_text('mov rax, ' + str(source))
     elif s_type == 'ID':
+        get_var(source)
         add_text('mov rax, [%s]' % source)
     elif s_type == 'expression':
         expression_main(source)
@@ -482,6 +492,7 @@ def assign_routine(dest, source):
             add_text('add rbx, rcx')
             add_text('mov rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(source[1],source[2])
             add_text('mov rax, [%s + %s * 8]' % (source[1], source[2]))
 
     if d_type == 'ARRAY':
@@ -600,7 +611,7 @@ def minus_routine(a, b, count=0):
         error_token()
 
     count += 1
-    
+
 
     if b_type == 'CONSTANT':
         add_text("sub rax, %s" % b)

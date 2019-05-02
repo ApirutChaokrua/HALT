@@ -1,4 +1,6 @@
-VAR a[2] <- {7,5 }
-VAR b <- Hxff -Hxf
-VAR c <-4
-SHOW(a[0]+" "+a[1]+" "+b)
+
+VAR a <- 0
+
+a <- 1 + 1
+
+SHOW("jkj"+a)

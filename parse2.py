@@ -79,14 +79,12 @@ def p_type_num(p):
              | NUMBER
              | HEX_NUM
              | MINUS_OP ID 
-             | MINUS_OP ID L_SBRACKET type_num R_SBRACKET
+             | MINUS_OP list_num
              | ID
     '''
 
     if len(p) == 3:
-        p[0] = (p[1] + p[2])
-    elif len(p) == 6:
-        p[0] = (p[1] + p[2] + p[3] + str(p[4]) + p[5])
+        p[0] = ('EXP', '-', 0, p[2])
     elif type(p[1]) is str:
         if p[1][:2]=="Hx" or p[1][:2]=="HX":
             p[0] = int(p[1][2:],16)
