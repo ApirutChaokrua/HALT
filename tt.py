@@ -433,10 +433,11 @@ def print_routine(fmt, arg):
                 get_var(a)
                 add_text("mov %s, [%s]" % (reg_order[reg_c], a))
             elif a_type == 'ARRAY':
-
+                print(a)
+                get_var(a[1])
                 index_type = get_type(a[2])
                 if index_type == 'ID':
-                    get_var(a[1])
+                    get_var(a[2])
                     add_text('mov rbx, [%s]' % a[2])
                     add_text('mov %s, [%s+rbx*8]' % (reg_order[reg_c],a[1]))
                 elif index_type == 'CONSTANT':
@@ -460,12 +461,14 @@ def print_routine(fmt, arg):
 
 
 def assign_routine(dest, source):
+    global global_var
     d_type = get_type(dest)
     s_type = get_type(source)
     # print(d_type)
     if s_type == 'CONSTANT':
         add_text('mov rax, ' + str(source))
     elif s_type == 'ID':
+        get_var(source)
         add_text('mov rax, [%s]' % source)
     elif s_type == 'expression':
         expression_main(source)

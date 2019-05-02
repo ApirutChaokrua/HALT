@@ -1,4 +1,5 @@
 VAR a[2] <- {7,5 }
-VAR b <- Hxff -Hxf
-VAR c <-4
-SHOW(a[0]+" "+a[1]+" "+b)
+VAR b <- 5
+VAR c <- 20
+c <- 2*a[1]+1
+SHOW(a[1]+" "+a[5]+" "+c)
