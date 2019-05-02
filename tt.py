@@ -42,7 +42,7 @@ nvl = -1
 nfl = -1
 chBreak = "chbreak"
 
-asmdata += "%s dq %s\n" % (chBreak, 1)
+# asmdata += "%s dq %s\n" % (chBreak, 1)
 asmdata += "%s dq %s\n" % (var_loop[0], 0)
 asmdata += "%s dq %s\n" % (var_loop[1], 0)
 asmdata += "%s dq %s\n" % (var_loop[2], 0)
@@ -86,7 +86,7 @@ add_text(main_entry)
 add_text("push rbp")
 
 
-cmp_symbol = ['==', '!=', '>', '<', '>=', '<=', '&&']
+cmp_symbol = ['EQ_OP', '!=', 'GI_OP', 'LI_OP', 'GE_OP', 'LE_OP', '&&']
 
 
 def get_type(symbol):
@@ -233,7 +233,7 @@ def if_routine(exp, stm, iselse=False):
     statement_main(stm)
     if iselse:
         add_text("jmp _L%d" % (global_if_counter + 1))
-    add_text("_L%d:" % exit_c)
+    add_text("_IF%d:" % exit_c)
 
 
 def else_routine(stm):
@@ -279,10 +279,8 @@ def loop_routing(exp, stm):
 
     nvl=nvl-1
     nfl=nfl-1
-    print("END LOOP")
 
 def break_loop():
-    print("BREAKKKKKKKK")
     global nvl,nfl,var_loop,fun_loop,chBreak
     # add_text("mov [%s], 0"% (chBreak))
     # add_text("mov rcx, [%s]"% (chBreak))
@@ -302,7 +300,7 @@ def statement_main(stm):
             'VAR': declare_var,
             'VAR_LIST': declare_arr,
             'MULTIPLE_LINE': multiple_stm_routine,
-            'if': if_routine,
+            'IF': if_routine,
             'ifelse': ifelse_routine,
             'LOOP': loop_routing,
             'VAR_LIST_VALUE': declare_arr,
@@ -322,8 +320,8 @@ def statement_main(stm):
         pass
 
 def expression_main(exp, count=0):
-
-    t = exp[1]
+    print(exp[0])
+    t = exp[0]
     if t in cmp_symbol:
         cmp_main(exp)
     else:
@@ -413,11 +411,11 @@ def cmp_main(cmp_e):
     if t != '&&':
         add_text("cmp rax, rbx")
     switcher = {
-        '==': equal_routine,
-        '>': greater_routine,
-        '<': less_routine,
-        '<=': less_equ_routine,
-        '>=': greater_equ_routine,
+        'EQ_OP': equal_routine,
+        'GI_OP': greater_routine,
+        'LI_OP': less_routine,
+        'LE_OP': less_equ_routine,
+        'GE_OP': greater_equ_routine,
         '&&': and_routine
     }
     func = switcher[t]
@@ -612,7 +610,7 @@ def minus_routine(a, b, count=0):
         error_token()
 
     count += 1
-    
+
 
     if b_type == 'CONSTANT':
         add_text("sub rax, %s" % b)
