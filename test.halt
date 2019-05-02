@@ -1,6 +1,4 @@
-
-VAR a <- 0
-
-a <- 1 + 1
-
-SHOW("jkj"+a)
+#VAR i <- 0
+#VAR a[5]<-{1,2,3,4,5}
+SHOWLN("ddd"+5+"uuu")
+SHOW("ssdd")
