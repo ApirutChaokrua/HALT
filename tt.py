@@ -40,7 +40,6 @@ var_loop = ["_VL1" , "_VL2", "_VL3","_VL4","_VL5"]
 fun_loop = ["_L1","_L2","_L3","_L4","_L5"]
 nvl = -1
 nfl = -1
-chBreak = "chbreak"
 
 # asmdata += "%s dq %s\n" % (chBreak, 1)
 asmdata += "%s dq %s\n" % (var_loop[0], 0)
@@ -86,7 +85,7 @@ add_text(main_entry)
 add_text("push rbp")
 
 
-cmp_symbol = ['EQ_OP', '!=', 'GI_OP', 'LI_OP', 'GE_OP', 'LE_OP', '&&']
+cmp_symbol = ['EQ_OP', '!=', 'GT_OP', 'LI_OP', 'GE_OP', 'LE_OP', '&&']
 
 
 def get_type(symbol):
@@ -219,27 +218,16 @@ def multiple_stm_routine(stm1, stm2):
     statement_main(stm2)
 
 
-def ifelse_routine(ifstm, elsestm):
-    if_routine(ifstm[1], ifstm[2], iselse=True)
-    else_routine(elsestm)
-
-
-def if_routine(exp, stm, iselse=False):
+def if_routine(exp, stm):
     global global_if_counter
     global_if_counter += 1
     exit_c = global_if_counter
-    expression_main(exp)
+    expression_if(exp)
     statement_main(stm)
-    if iselse:
-        add_text("jmp _IF%d" % (global_if_counter + 1))
-    add_text("_IF%d:" % exit_c)
+    print("ENDIF")
+    add_text("_EXIF%d:" % exit_c)
 
 
-def else_routine(stm):
-    global global_if_counter
-    statement_main(stm[1])
-    global_if_counter += 1
-    add_text("_L%d:" % global_if_counter)
 
 
 def loop_routing(exp, stm):
@@ -301,7 +289,6 @@ def statement_main(stm):
             'VAR_LIST': declare_arr,
             'MULTIPLE_LINE': multiple_stm_routine,
             'IF': if_routine,
-            'ifelse': ifelse_routine,
             'LOOP': loop_routing,
             'VAR_LIST_VALUE': declare_arr,
             'BREAK': break_loop
@@ -325,10 +312,14 @@ def statement_main(stm):
     except:
         pass
 
+def expression_if(exp, count=0):
+    t = exp[0]
+    if t in cmp_symbol:
+        cmp_main(exp)
+
 def expression_main(exp, count=0):
     # print(exp[0])
     t = exp[1]
-    e = exp[0]
     if t in cmp_symbol:
         cmp_main(exp)
     else:
@@ -417,9 +408,9 @@ def cmp_main(cmp_e):
 
     if t != '&&':
         add_text("cmp rax, rbx")
-    switcher = {
+        switcher = {
         'EQ_OP': equal_routine,
-        'GI_OP': greater_routine,
+        'GT_OP': greater_routine,
         'LI_OP': less_routine,
         'LE_OP': less_equ_routine,
         'GE_OP': greater_equ_routine,
@@ -434,7 +425,12 @@ def input_routine():
 
 
 def print_routine(fmt, arg, enter=0):
-    add_text("mov rcx, " + get_str(fmt))
+    print(fmt)
+    print(fmt+'\\n')
+    if arg[0] == 'SHOWLN': 
+        add_text("mov rcx, " + get_str(fmt+'\n'))
+    else: 
+        add_text("mov rcx, " + get_str(fmt))
     reg_c = 1
     showEnter = False 
     while arg[1] != None :
@@ -477,11 +473,12 @@ def print_routine(fmt, arg, enter=0):
 
     if arg[0]=='SHOW'or arg[0] == 'SHOWLN':
         print_routine(arg[1],arg[2])
-        if arg[0]=='SHOWLN':
-            showEnter = True 
-            print("SHOWLN TRUE"+arg[1])
-            add_text('mov rcx,10')
-            add_text("call " + printf_label)
+
+    #     if arg[0]=='SHOWLN':
+    #         showEnter = True 
+    #         print("SHOWLN TRUE"+arg[1])
+    #         add_text('mov rcx, 0')
+    #         add_text("call " + printf_label)
     
 
 
@@ -887,24 +884,24 @@ def and_routine():
 
 
 def less_equ_routine():
-    add_text("jg _L%d" % global_if_counter)
+    add_text("jg _EXIF%d" % global_if_counter)
 
 
 def greater_equ_routine():
-    add_text("jl _L%d" % global_if_counter)
+    add_text("jl _EXIF%d" % global_if_counter)
 
 
 def less_routine():
-    add_text("jge _L%d" % global_if_counter)
+    add_text("jge _EXIF%d" % global_if_counter)
 
 
 def greater_routine():
-    add_text("jle _L%d" % global_if_counter)
+    add_text("jle _EXIF%d" % global_if_counter)
 
 
 def not_equal_routine():
-    add_text("je _L%d" % global_if_counter)
+    add_text("je _EXIF%d" % global_if_counter)
 
 
 def equal_routine():
-    add_text("jne _L%d" % global_if_counter)
+    add_text("jne _EXIF%d" % global_if_counter)

@@ -38,8 +38,6 @@ def p_stmSpace(p):
     else:
         p[0] = p[2]
 
-
-
 # This catch-all rule is used for any catastrophic errors.  In this case,
 # we simply return nothing
 def p_code_error(p):
@@ -77,12 +75,22 @@ def p_stm(p):
 def p_type_num(p):
     '''
     type_num : sign_number
-             | list_num
              | NUMBER
              | HEX_NUM
+             | list_num
              | MINUS_OP ID 
              | MINUS_OP list_num
              | ID
+    type_var_num : list_num
+                 | MINUS_OP ID 
+                 | MINUS_OP list_num
+                 | ID
+    type_hex_num : NUMBER
+                 | HEX_NUM
+                 | list_num
+                 | MINUS_OP ID 
+                 | MINUS_OP list_num
+                 | ID
     '''
 
     if len(p) == 3:
@@ -201,15 +209,17 @@ def p_condition_EQ(p):
 # LOOP statement
 def p_loop_stm(p):
     '''
-    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
+    loop_stm : LOOP L_BRACKET type_num COMMA type_num  R_BRACKET L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
              | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
     '''
-    p[0] = ('LOOP', p[3], p[6])
-    
+    if len(p) == 10:
+        p[0] = ('LOOP', (p[3], p[5]), p[8])
+    else:
+        p[0] = ('LOOP', p[3], p[6])
 # SHOW statement
 def p_showln_var_stm(p):
     '''
-    show_stm : SHOWLN L_BRACKET rec_var_msg1 R_BRACKET
+    show_stm : SHOWLN L_BRACKET rec_var_msg1_showln R_BRACKET
     '''
     p[0] = ('SHOWLN', '"%ld"', p[3])
 
@@ -228,6 +238,12 @@ def p_showln_blank_stm(p) :
     # p[0] = ('SHOWLN', None, None)
     p[0] = ('SHOWLN', None, p[3])
 
+def p_showln_hex_stm(p):
+    '''
+    show_stm : SHOWLN L_BRACKET rec_hex_msg1_showln recursive_showln R_BRACKET
+    '''
+    p[0] = ('SHOWLN', '"%lX"', p[3])
+
 def p_show_var_stm(p):
     '''
     show_stm : SHOW L_BRACKET rec_var_msg1 R_BRACKET
@@ -241,19 +257,43 @@ def p_show_str_stm(p):
     if(len(p) == 6):
         p[0] = ('SHOW', p[3], p[4])
 
+def p_show_hex_stm(p):
+    '''
+    show_stm : SHOW L_BRACKET hex_msg1 recursive_show R_BRACKET
+    '''
+    p[0] = ('SHOW', '"%lX"', p[3])
+
 def p_show_pass_rec_msg(p):
     '''
     recursive_show : ADD_OP rec_msg
                   | ADD_OP rec_var_msg2
+                  | ADD_OP rec_hex_msg2
                   | empty
     recursive_showln : ADD_OP rec_msg_showln
                          | ADD_OP rec_var_msg2_showln
+                         | ADD_OP rec_hex_msg2_showln
                          | empty
     '''
     if(len(p) == 2):
         p[0] = p[0] = ("RECURSIVE_MSG", None, None)
     else:
         p[0] = p[2]
+
+def p_show_rec_hex_msg1(p):
+    '''
+    hex_msg1 : HEX L_BRACKET type_hex_num R_BRACKET recursive_show
+             | hex L_BRACKET type_hex_num R_BRACKET recursive_show
+    '''
+    p[0] = ("RECURSIVE_MSG",p[3], p[5])
+
+def p_show_rec_hex_msg2(p):
+    '''
+    rec_hex_msg2 : hex_msg1
+    '''
+    if(len(p) == 2):
+        p[0] = ("SHOW",'"%lX"', p[1])
+    else :
+        p[0] = ("RECURSIVE_MSG", None, None)
 
 def p_show_rec_str_msg(p):
     '''
@@ -266,7 +306,7 @@ def p_show_rec_str_msg(p):
 
 def p_show_rec_var_msg1(p):
     '''
-    rec_var_msg1 : type_num recursive_show
+    rec_var_msg1 : type_var_num recursive_show
     '''
     if(len(p) == 3):
         p[0] = ("RECURSIVE_MSG",p[1], p[2])
@@ -293,7 +333,7 @@ def p_show_rec_str_msg_showln(p):
 
 def p_show_rec_var_msg1_showln(p):
     '''
-    rec_var_msg1_showln : type_num recursive_showln
+    rec_var_msg1_showln : type_var_num recursive_showln
     '''
     if(len(p) == 3):
         p[0] = ("RECURSIVE_MSG",p[1], p[2])
@@ -308,6 +348,23 @@ def p_show_rec_var_msg2_showln(p):
         p[0] = ("SHOWLN",'"%ld"', p[1])
     else :
         p[0] = ("RECURSIVE_MSG", None, None)
+
+def p_show_rec_hex_msg1_showln(p):
+    '''
+    rec_hex_msg1_showln : HEX L_BRACKET type_hex_num R_BRACKET recursive_showln
+                        | hex L_BRACKET type_hex_num R_BRACKET recursive_showln
+    '''
+    p[0] = ("RECURSIVE_MSG",p[3], p[5])
+
+def p_show_rec_hex_msg2_showln(p):
+    '''
+    rec_hex_msg2_showln : rec_hex_msg1_showln
+    '''
+    if(len(p) == 2):
+        p[0] = ("SHOWLN",'"%lX"', p[1])
+    else :
+        p[0] = ("RECURSIVE_MSG", None, None)
+
 
 
 # BREAK statement
