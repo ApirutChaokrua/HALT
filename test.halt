@@ -1,3 +1,5 @@
 LOOP(1){
-  BREAK
+  IF 3 >2 ?{
+    BREAK
+  }
 }

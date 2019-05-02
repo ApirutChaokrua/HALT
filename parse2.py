@@ -59,7 +59,8 @@ def p_stm(p):
          | empty
          | stmSpace
 
-    inside_loop_stm : break_stm
+    inside_loop_stm : if_stm_loop
+                    | break_stm
                     | stmSpace_loop
                     | stm
     '''
@@ -97,12 +98,14 @@ def p_set_num(p):
         p[0] = ('index', p[1], p[3])
     else:
         p[0] = ('index', p[1], None)
+
 # DEFINE statement
 # def p_def_stm(p):
 #     '''
 #     def_stm : DEF ID NUMBER
 #     '''
 #     p[0] = ('DEFINE', p[2], p[3])
+
 # VAR statement
 def p_var_stm(p):
     '''
@@ -176,14 +179,11 @@ def p_exp_stm(p):
 # IF statement
 def p_if_stm(p):
     '''
-    if_stm : IF condition QUEST L_CURLYBRACKET EOL stm  EOL R_CURLYBRACKET
-           | IF condition QUEST L_CURLYBRACKET stm R_CURLYBRACKET
+    if_stm :  IF condition QUEST L_CURLYBRACKET stm R_CURLYBRACKET
+    if_stm_loop :  IF condition QUEST L_CURLYBRACKET inside_loop_stm R_CURLYBRACKET
 
     '''
-    if(len(p) == 9):
-        p[0] = ('IF', p[2], p[6])
-    else :
-        p[0] = ('IF', p[2], p[5])
+    p[0] = ('IF', p[2], p[5])
 
 def p_condition_LE(p):
     'condition : exp_stm LE_OP exp_stm'
