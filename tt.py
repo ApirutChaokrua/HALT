@@ -38,7 +38,7 @@ var_loop = ["_VL1" , "_VL2", "_VL3","_VL4","_VL5"]
 fun_loop = ["_L1","_L2","_L3","_L4","_L5"]
 nvl = -1
 nfl = -1
-chBreak = "chbreak"
+# chBreak = "chbreak"
 
 asmdata += "%s dq %s\n" % (chBreak, 1)
 asmdata += "%s dq %s\n" % (var_loop[0], 0)
