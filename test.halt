@@ -1,7 +1,7 @@
 VAR t[5] <- {1,2,3,4,5} 
 VAR i <- 0
-LOOP(5){
-t[i]<-(t[i]+2)*10
-SHOW(t[i]+" ")
-i<-i+1
-}
+SHOW("var"+i+"\ndd")
+i <- 100-2*10*(4-2*1)
+SHOW("varafter"+i)
+VAR p <- 2*5-2*2
+SHOW("var "+p)
