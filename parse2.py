@@ -38,8 +38,6 @@ def p_stmSpace(p):
     else:
         p[0] = p[2]
 
-
-
 # This catch-all rule is used for any catastrophic errors.  In this case,
 # we simply return nothing
 def p_code_error(p):
