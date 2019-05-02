@@ -1,5 +1,5 @@
 
-LOOP(INF){
-    SHOW("aa")
+  IF 3 > 2 ? {
     BREAK
-}
+    VAR a
+  }
