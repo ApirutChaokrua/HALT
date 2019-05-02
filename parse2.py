@@ -99,7 +99,9 @@ def p_list_num(p):
 def p_set_num(p):
     '''
     set_num : NUMBER COMMA set_num
+            | sign_number COMMA set_num
             | NUMBER
+            | sign_number
     '''
     if(len(p) > 2):
         p[0] = ('index', p[1], p[3])
@@ -144,7 +146,6 @@ def p_assign_stm(p):
     '''
     p[0] = ('ASSIGN', p[1], p[3])
 
-# Assignment statement
 def p_assign_list_stm(p):
     '''
     assign_list_stm : list_num ASSIGN_OP exp_stm
