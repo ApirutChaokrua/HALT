@@ -34,6 +34,7 @@ asmleave = 'mov rax, 0\npop rbp\nret\n'
 reg_order = ["rcx", "rdx", "r8", "r9"]
 
 global_var = []
+global_arr = []
 
 var_loop = ["_VL1" , "_VL2", "_VL3","_VL4","_VL5"]
 fun_loop = ["_L1","_L2","_L3","_L4","_L5"]
@@ -108,6 +109,12 @@ def get_var(symbol):
     if symbol in global_var:
         return symbol
     print_error("Use of undeclare variable %s" % symbol)
+
+def get_arr(ID,num):
+    for i in global_arr :
+        if (i[0]==ID and num>=0 and num<int(i[1])):
+                return ID
+    print_error("out of range %s" % ID)
 
 
 def get_str(text):
@@ -202,8 +209,9 @@ def declare_arr(var_name, args, index):
         else:
             # var array with size
             asmdata += "%s times %s dq 0" % (var_name, args)
-
+        global_arr.append([var_name,args])
         asmdata += '\n'
+        print(global_arr)
 
 
 def multiple_stm_routine(stm1, stm2):
@@ -422,7 +430,6 @@ def print_routine(fmt, arg):
                 get_var(a)
                 add_text("mov %s, [%s]" % (reg_order[reg_c], a))
             elif a_type == 'ARRAY':
-                print(a)
                 get_var(a[1])
                 index_type = get_type(a[2])
                 if index_type == 'ID':
@@ -430,6 +437,7 @@ def print_routine(fmt, arg):
                     add_text('mov rbx, [%s]' % a[2])
                     add_text('mov %s, [%s+rbx*8]' % (reg_order[reg_c],a[1]))
                 elif index_type == 'CONSTANT':
+                    get_arr(a[1],a[2])
                     add_text('mov %s, [%s + %s * 8]' %
                              (reg_order[reg_c], a[1], a[2]))
             else:
@@ -474,6 +482,7 @@ def assign_routine(dest, source):
             add_text('add rbx, rcx')
             add_text('mov rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(source[1],source[2])
             add_text('mov rax, [%s + %s * 8]' % (source[1], source[2]))
 
     if d_type == 'ARRAY':
