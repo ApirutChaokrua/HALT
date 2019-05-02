@@ -33,8 +33,6 @@ def p_stmSpace(p):
     else:
         p[0] = p[2]
 
-
-
 # This catch-all rule is used for any catastrophic errors.  In this case,
 # we simply return nothing
 def p_code_error(p):
@@ -51,12 +49,14 @@ def p_stm(p):
          | exp_stm
          | loop_stm
          | show_stm
-         | stop
-         | return
+         | break_stm
          | empty
          | stmSpace
     '''
     p[0] = p[1]
+
+
+
 # TYPE OF NUMBER
 def p_type_num(p):
     '''
@@ -315,10 +315,10 @@ def p_show_rec_var_msg2_showln(p):
         p[0] = ("RECURSIVE_MSG", None, None)
 
 
-# EXIT statement
-def p_stop(p):
-    '''stop : EXIT'''
-    p[0] = ('EXIT',)
+# BREAK statement
+def p_break_stm (p):
+    '''break_stm : BREAK'''
+    p[0] = ('BREAK', None, None)
 
 # RETURN statement
 def p_return(p):

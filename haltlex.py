@@ -7,7 +7,7 @@ keywords = (
     'LE_OP', 'GE_OP', 'EQ_OP','LT_OP', 'GT_OP','MOD_OP', 
     'L_BRACKET', 'R_BRACKET', 'L_CURLYBRACKET', 'R_CURLYBRACKET', 'L_SBRACKET', 'R_SBRACKET',
     'ASSIGN_OP', 'ADD_OP', 'MINUS_OP', 'MUL_OP', 'DIVIDE_OP',  
-    'NUMBER', 'HEX_NUM', 'QUEST','COMMA', 'ID','EXIT','RETURN', 'EOL', 'INF','STRING'
+    'NUMBER', 'HEX_NUM', 'QUEST','COMMA', 'ID','EXIT','RETURN', 'EOL', 'INF','STRING', 'BREAK'
 )
 tokens = keywords 
 
@@ -32,6 +32,7 @@ t_MUL_OP = r'\*'
 t_DIVIDE_OP = r'/'
 t_QUEST = r'\?'
 t_INF = r'INF'
+t_BREAK = r'BREAK'
 t_STRING = r'\".*?\"'
 
 
@@ -71,7 +72,7 @@ def t_error(t):
 lexer = lex.lex(debug=0)
 
 # test Laxer
-lexer.input("")
+lexer.input("BREAK")
 
 
 while True:
