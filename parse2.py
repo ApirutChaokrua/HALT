@@ -91,7 +91,7 @@ def p_type_num(p):
         p[0] = (p[1] + p[2] + p[3] + str(p[4]) + p[5])
     elif type(p[1]) is str:
         if p[1][:2]=="Hx" or p[1][:2]=="HX":
-            p[0] = (int(p[1][2:],16))
+            p[0] = int(p[1][2:],16)
         else:
             p[0] = p[1]
     else:
