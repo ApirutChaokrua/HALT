@@ -1,5 +1,5 @@
+VAR a <- 0
 
-  IF 3 > 2 ? {
-    BREAK
-    VAR a
-  }
+a <- 1 + 1
+
+SHOW(a)
