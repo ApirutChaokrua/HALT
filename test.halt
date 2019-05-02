@@ -1,7 +1,4 @@
-VAR t[5] <- {1,2,3,4,5} 
-VAR i <- 0
-LOOP(5){
-t[i]<-(t[i]+2)*10
-SHOW(t[i]+" ")
-i<-i+1
+
+LOOP(INF){
+    Break
 }
