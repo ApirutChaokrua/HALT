@@ -3,11 +3,11 @@ import ply.lex as lex
 
 keywords = (
 
-    'DEF', 'VAR', 'IF', 'SHOW', 'SHOWLN', 'LOOP', 
+    'VAR', 'IF', 'SHOW', 'SHOWLN', 'LOOP', 
     'LE_OP', 'GE_OP', 'EQ_OP','LT_OP', 'GT_OP','MOD_OP', 
     'L_BRACKET', 'R_BRACKET', 'L_CURLYBRACKET', 'R_CURLYBRACKET', 'L_SBRACKET', 'R_SBRACKET',
     'ASSIGN_OP', 'ADD_OP', 'MINUS_OP', 'MUL_OP', 'DIVIDE_OP',  
-    'NUMBER', 'HEX_NUM', 'QUEST','COMMA', 'ID','EXIT','RETURN', 'EOL', 'INF','STRING', 'BREAK'
+    'NUMBER', 'HEX_NUM', 'QUEST','COMMA', 'ID', 'EOL', 'INF','STRING', 'BREAK'
 )
 tokens = keywords 
 
