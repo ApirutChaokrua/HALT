@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-LOOP(1){
-  BREAK
-}
-=======
 VAR t[5] <- {1,2,3,4,5} 
 VAR i <- 0
 SHOW("var"+i+"\ndd")
@@ -10,4 +5,3 @@ i <- 100-2*10*(4-2*1)
 SHOW("varafter"+i)
 VAR p <- 2*5-2*2
 SHOW("var "+p)
->>>>>>> cd23d9f05d54b0f920e7f1c8c5190fc1d01ce9c9
