@@ -37,6 +37,7 @@ global_var = []
 global_arr = []
 
 var_loop = ["_VL1" , "_VL2", "_VL3","_VL4","_VL5"]
+vare_loop = ["_VEL1" , "_VEL2", "_VEL3","_VEL4","_VEL5"]
 fun_loop = ["_L1","_L2","_L3","_L4","_L5"]
 nvl = -1
 nfl = -1
@@ -47,6 +48,12 @@ asmdata += "%s dq %s\n" % (var_loop[1], 0)
 asmdata += "%s dq %s\n" % (var_loop[2], 0)
 asmdata += "%s dq %s\n" % (var_loop[3], 0)
 asmdata += "%s dq %s\n" % (var_loop[4], 0)
+
+asmdata += "%s dq %s\n" % (vare_loop[0], 0)
+asmdata += "%s dq %s\n" % (vare_loop[1], 0)
+asmdata += "%s dq %s\n" % (vare_loop[2], 0)
+asmdata += "%s dq %s\n" % (vare_loop[3], 0)
+asmdata += "%s dq %s\n" % (vare_loop[4], 0)
 
 global_str_counter = 0
 global_str = {}
@@ -225,19 +232,52 @@ def if_routine(exp, stm):
     exit_c = global_if_counter
     expression_if(exp)
     statement_main(stm)
+
     print("ENDIF")
     add_text("_EXIF%d:" % exit_c)
 
 
 
+def getValueVarible(ex):
+    type_a = get_type(ex)
 
+    if type_a == 'ID':
+        get_var(ex)
+        add_text("mov rax, [%s]" % ex)
+        return "rax"
+    elif type_a == 'CONSTANT':
+        print("rax")
+        add_text("mov rax, %s" % ex)
+        return 'rax'
+    elif type_a == 'ARRAY':
+        get_var(ex[1])
+        index_type = get_type(ex[2])
+        if index_type == 'ID':
+            get_var(ex[2])
+            add_text('mov rbx, [%s]' % ex[2])
+            add_text('mov %s, [%s+rbx*8]' % (reg_order[reg_c],ex[1]))
+            return '%s'%reg_order[reg_c]
+        elif index_type == 'CONSTANT':
+            get_arr(ex[1],ex[2])
+            add_text('mov %s, [%s + %s * 8]' %(reg_order[reg_c], ex[1], ex[2]))
+            return '%s'%reg_order[reg_c]
+
+# reg_order = ["rcx", "rdx", "r8", "r9"]
 def loop_routing(exp, stm):
     global nvl,nfl,var_loop,fun_loop,chBreak
     nvl+=1
     nfl+=1
     if(exp != 'INF'):
-        add_text("mov rcx, %d" % (exp))
+        print("!INF")
+        b=getValueVarible(exp[1])
+
+        add_text("mov rcx, %s" % (b))
         add_text("mov [%s], rcx" % (var_loop[nvl]))
+
+        a=getValueVarible(exp[0])
+        add_text("mov rcx, %s" % (a))
+        add_text("mov [%s], rcx" % (vare_loop[nvl]))
+
         add_text("%s:" % (fun_loop[nfl]))
 
         if stm != None:
@@ -246,7 +286,8 @@ def loop_routing(exp, stm):
         add_text("mov rcx, [%s]"% (var_loop[nvl]))
         add_text("dec rcx")
         add_text("mov [%s], rcx"% (var_loop[nvl]))
-        add_text("cmp rcx, 0")
+        add_text("mov rax, [%s]"% (vare_loop[nvl]))
+        add_text("cmp rcx, rax")
         add_text("je %sEX"% (fun_loop[nfl]))
         add_text("jmp %s"% (fun_loop[nfl]))
         add_text("%sEX:"% (fun_loop[nfl]))

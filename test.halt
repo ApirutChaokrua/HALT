@@ -1,8 +1,27 @@
-VAR a <- 0
-LOOP(INF){
-  a <- a+1
-  SHOW(a+" ")
-  IF a > 10 ? {
-    BREAK
-  }
+VAR a <- 1
+VAR b <- 13
+VAR c <- 10
+VAR most
+
+IF b > a ?{
+    IF b >= c ?{
+      SHOW("aaa \n")
+      most <- b
+    }
+    IF c >= b ?{
+      SHOW("bbb \n" )
+      most <- c
+    }
 }
+
+IF a > b ?{
+    IF a >= c ?{
+      SHOW("ccc \n")
+      most <- a
+    }
+    IF c >= a ?{
+      SHOW("ddd \n")
+      most <- c
+    }
+}
+SHOW("most number is "+ most)
