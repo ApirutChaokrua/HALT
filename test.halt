@@ -1,10 +1,5 @@
-VAR a
-VAR b <- 3
-VAR c[5] <- {4, 5, 2, 3, 1}
-VAR d[3] <- {6, 5, 4}
-VAR sum
-
-
-SHOW("SUM : " + sum)
-
-
+LOOP(1){
+  IF 3 >2 ?{
+    BREAK
+  }
+}

@@ -34,14 +34,18 @@ reg_order = ["rcx", "rdx", "r8", "r9"]
 
 global_var = []
 
-var_loop = ["_VL1" , "_VL2", "_VL3"]
-fun_loop = ["_L1","_L2","_L3"]
+var_loop = ["_VL1" , "_VL2", "_VL3","_VL4","_VL5"]
+fun_loop = ["_L1","_L2","_L3","_L4","_L5"]
 nvl = -1
 nfl = -1
+chBreak = "chbreak"
 
+asmdata += "%s dq %s\n" % (chBreak, 1)
 asmdata += "%s dq %s\n" % (var_loop[0], 0)
 asmdata += "%s dq %s\n" % (var_loop[1], 0)
 asmdata += "%s dq %s\n" % (var_loop[2], 0)
+asmdata += "%s dq %s\n" % (var_loop[3], 0)
+asmdata += "%s dq %s\n" % (var_loop[4], 0)
 
 global_str_counter = 0
 global_str = {}
@@ -222,8 +226,7 @@ def else_routine(stm):
 
 
 def loop_routing(exp, stm):
-    global nvl,nfl,var_loop,fun_loop
-    print(var_loop[0])
+    global nvl,nfl,var_loop,fun_loop,chBreak
     nvl+=1
     nfl+=1
     if(exp != 'INF'):
@@ -242,9 +245,33 @@ def loop_routing(exp, stm):
         add_text("jmp %s"% (fun_loop[nfl]))
         add_text("%sEX:"% (fun_loop[nfl]))
         fun_loop[nfl]='_'+fun_loop[nfl]
+
+    if exp == 'INF':
+        print("INFFFFFF")
+        add_text("mov rcx, %d" % (1))
+        add_text("mov [%s], rcx" % (var_loop[nvl]))
+        add_text("%s:" % (fun_loop[nfl]))
+
+        if stm != None:
+            statement_main(stm)
+
+        add_text("jmp %s"% (fun_loop[nfl]))
+        add_text("%sEX:"% (fun_loop[nfl]))
+        fun_loop[nfl]='_'+fun_loop[nfl]
+
     nvl=nvl-1
     nfl=nfl-1
     print("END LOOP")
+
+def break_loop():
+    print("BREAKKKKKKKK")
+    global nvl,nfl,var_loop,fun_loop,chBreak
+    # add_text("mov [%s], 0"% (chBreak))
+    # add_text("mov rcx, [%s]"% (chBreak))
+    # add_text("mov [%s], 1"% (chBreak))
+    # add_text("cmp rcx, 0")
+    add_text("jmp %sEX"% (fun_loop[nfl]))
+
 
 
 def statement_main(stm):
@@ -261,9 +288,12 @@ def statement_main(stm):
             'ifelse': ifelse_routine,
             'LOOP': loop_routing,
             'VAR_LIST_VALUE': declare_arr,
+            'BREAK': break_loop
         }
         func = switcher[state_symbol]
-        if stm[0] == 'VAR_LIST' or stm[0] == 'VAR_LIST_VALUE':
+        if stm[0]=='BREAK':
+            func()
+        elif stm[0] == 'VAR_LIST' or stm[0] == 'VAR_LIST_VALUE':
             func(stm[1],stm[2],stm[3])
         else:
             func(stm[1], stm[2])
@@ -397,7 +427,7 @@ def print_routine(fmt, arg):
                 get_var(a)
                 add_text("mov %s, [%s]" % (reg_order[reg_c], a))
             elif a_type == 'ARRAY':
-                
+
                 index_type = get_type(a[2])
                 print("print ARRAY",a[2])
                 if index_type == 'ID':

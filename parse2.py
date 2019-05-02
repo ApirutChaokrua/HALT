@@ -17,16 +17,21 @@ def p_code(p):
     '''
     code : code EOL stm
          | stm
+    code_loop : code_loop EOL inside_loop_stm
+              | inside_loop_stm
     '''
     if len(p) == 4 :
         p[0] = ('MULTIPLE_LINE',p[1],p[3])
     else:
         p[0] = p[1]
 
+
 def p_stmSpace(p):
     '''
     stmSpace : stmSpace EOL code
              | EOL code
+    stmSpace_loop : stmSpace_loop EOL code_loop
+                  | EOL code_loop
     '''
     if len(p) == 4 :
         p[0] = p[3]
@@ -51,12 +56,16 @@ def p_stm(p):
          | exp_stm
          | loop_stm
          | show_stm
-         | stop
-         | return
          | empty
          | stmSpace
+
+    inside_loop_stm : if_stm_loop
+                    | break_stm
+                    | stmSpace_loop
+                    | stm
     '''
     p[0] = p[1]
+
 # TYPE OF NUMBER
 def p_type_num(p):
     '''
@@ -89,12 +98,14 @@ def p_set_num(p):
         p[0] = ('index', p[1], p[3])
     else:
         p[0] = ('index', p[1], None)
+
 # DEFINE statement
 # def p_def_stm(p):
 #     '''
 #     def_stm : DEF ID NUMBER
 #     '''
 #     p[0] = ('DEFINE', p[2], p[3])
+
 # VAR statement
 def p_var_stm(p):
     '''
@@ -168,14 +179,11 @@ def p_exp_stm(p):
 # IF statement
 def p_if_stm(p):
     '''
-    if_stm : IF condition QUEST L_CURLYBRACKET EOL stm  EOL R_CURLYBRACKET
-           | IF condition QUEST L_CURLYBRACKET stm R_CURLYBRACKET
+    if_stm :  IF condition QUEST L_CURLYBRACKET stm R_CURLYBRACKET
+    if_stm_loop :  IF condition QUEST L_CURLYBRACKET inside_loop_stm R_CURLYBRACKET
 
     '''
-    if(len(p) == 9):
-        p[0] = ('IF', p[2], p[6])
-    else :
-        p[0] = ('IF', p[2], p[5])
+    p[0] = ('IF', p[2], p[5])
 
 def p_condition_LE(p):
     'condition : exp_stm LE_OP exp_stm'
@@ -200,8 +208,8 @@ def p_condition_EQ(p):
 # LOOP statement
 def p_loop_stm(p):
     '''
-    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET  stm  R_CURLYBRACKET
-             | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET  stm  R_CURLYBRACKET
+    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
+             | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
     '''
     p[0] = ('LOOP', p[3], p[6])
     
@@ -315,10 +323,10 @@ def p_show_rec_var_msg2_showln(p):
         p[0] = ("RECURSIVE_MSG", None, None)
 
 
-# EXIT statement
-def p_stop(p):
-    '''stop : EXIT'''
-    p[0] = ('EXIT',)
+# BREAK statement
+def p_break_stm (p):
+    '''break_stm : BREAK'''
+    p[0] = ('BREAK', None, None)
 
 # RETURN statement
 def p_return(p):
