@@ -61,8 +61,15 @@ def p_stm(p):
 
     inside_loop_stm : if_stm_loop
                     | break_stm
+                    | var_stm
+                    | assign_stm
+                    | assign_list_stm
+                    | exp_stm
+                    | loop_stm
+                    | show_stm
+                    | empty
                     | stmSpace_loop
-                    | stm
+
     '''
     p[0] = p[1]
 
@@ -179,8 +186,8 @@ def p_exp_stm(p):
 # IF statement
 def p_if_stm(p):
     '''
-    if_stm :  IF condition QUEST L_CURLYBRACKET stm R_CURLYBRACKET
-    if_stm_loop :  IF condition QUEST L_CURLYBRACKET inside_loop_stm R_CURLYBRACKET
+    if_stm      :  IF condition QUEST L_CURLYBRACKET stm                R_CURLYBRACKET
+    if_stm_loop :  IF condition QUEST L_CURLYBRACKET inside_loop_stm    R_CURLYBRACKET
 
     '''
     p[0] = ('IF', p[2], p[5])

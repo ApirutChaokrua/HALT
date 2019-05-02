@@ -1,5 +1,5 @@
-LOOP(1){
-  IF 3 >2 ?{
+
+  IF 3 > 2 ? {
     BREAK
+    VAR a
   }
-}
