@@ -293,7 +293,10 @@ def expression_main(exp, count=0):
             paren_alone_routine(exp[2])
         elif t=='(' and exp[0]=='MINUS_PAREN':
             minus_routine(0,exp[2])
-
+        elif t=='(' and get_type(exp[2])=='ID':
+            paren_alone_ID_routine(exp[2])
+        elif t=='(' and get_type(exp[2])=='ARRAY':
+            paren_alone_LIST_routine(exp[2])
         elif t=='(':
             func(exp[2],0)
 
@@ -305,6 +308,10 @@ def paren_routine(a,count=0):
 
 def paren_alone_routine(a):
     add_text("mov rax, %s" % a)
+def paren_alone_ID_routine(a):
+    add_text("mov rax, [%s]" % a)
+def paren_alone_LIST_routine(a):
+    add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
 
 def cmp_main(cmp_e):
     global global_if_counter
@@ -558,6 +565,7 @@ def minus_routine(a, b, count=0):
         error_token()
 
     count += 1
+    
 
     if b_type == 'CONSTANT':
         add_text("sub rax, %s" % b)
@@ -598,7 +606,7 @@ def multiply_routine(a, b, count=0):
         if count == 0:
             add_text("mov rax, [%s]" % a)
         else:
-            add_text("imul rax, [%s]" % a)
+            add_text("mov rax, [%s]" % a)
     elif a_type == 'expression':
         expression_main(a, count)
     elif a_type == 'ARRAY':
@@ -612,12 +620,13 @@ def multiply_routine(a, b, count=0):
             if count == 0:
                 add_text('mov rax, [rbx]')
             else:
-                add_text('imul rax, [rbx]')
+                add_text('mov rax, [rbx]')
+                # add_text('imul rax, [rbx]')
         elif index_type == 'CONSTANT':
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
-                add_text('imul rax, [%s + %s * 8]' % (a[1], a[2]))
+                add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
     else:
         error_token()
     count += 1
@@ -662,8 +671,9 @@ def divide_routine(a, b, count=0):
         if count == 0:
             add_text('mov rax, [%s]' % a)
         else:
-            add_text('mov rcx, [%s]' % a)
-            add_text('idiv rcx')
+            add_text('mov rax, [%s]' % a)
+            # add_text('mov rcx, [%s]' % a)
+            # add_text('idiv rcx')
     elif a_type == 'expression':
         expression_main(a, count)
     elif a_type == 'ARRAY':
@@ -677,14 +687,16 @@ def divide_routine(a, b, count=0):
             if count == 0:
                 add_text('mov rax, [rbx]')
             else:
-                add_text('mov rcx, [rbx]')
-                add_text('idiv rcx')
+                add_text('mov rax, [rbx]')
+                # add_text('mov rcx, [rbx]')
+                # add_text('idiv rcx')
         elif index_type == 'CONSTANT':
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
-                add_text('mov rcx, [%s + %s * 8]' % (a[1], a[2]))
-                add_text('idiv rcx')
+                add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
+                # add_text('mov rcx, [%s + %s * 8]' % (a[1], a[2]))
+                # add_text('idiv rcx')
     else:
         error_token()
     count += 1
@@ -735,9 +747,10 @@ def mod_routine(a, b, count=0):
         if count == 0:
             add_text('mov rax, [%s]' % a)
         else:
-            add_text('mov rcx, [%s]' % a)
-            add_text('idiv rcx')
-            add_text('mov rax, rdx')
+            add_text("mov rax,  %s" % a)
+            # add_text('mov rcx, [%s]' % a)
+            # add_text('idiv rcx')
+            # add_text('mov rax, rdx')
     elif a_type == 'expression':
         expression_main(a, count)
     elif a_type == 'ARRAY':
@@ -751,16 +764,18 @@ def mod_routine(a, b, count=0):
             if count == 0:
                 add_text('mov rax, [rbx]')
             else:
-                add_text('mov rcx, [rbx]')
-                add_text('idiv rcx')
-                add_text('mov rax, rdx')
+                add_text('mov rax, [rbx]')
+                # add_text('mov rcx, [rbx]')
+                # add_text('idiv rcx')
+                # add_text('mov rax, rdx')
         elif index_type == 'CONSTANT':
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
-                add_text('mov rcx, [%s + %s * 8]' % (a[1], a[2]))
-                add_text('idiv rcx')
-                add_text('mov rax, rdx')
+                add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
+                # add_text('mov rcx, [%s + %s * 8]' % (a[1], a[2]))
+                # add_text('idiv rcx')
+                # add_text('mov rax, rdx')
     else:
         error_token()
 
