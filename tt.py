@@ -394,11 +394,8 @@ def print_routine(fmt, arg):
                 print("print ARRAY",a[2])
                 if index_type == 'ID':
                     get_var(a[1])
-                    add_text('mov rcx, [%s]' % a[2])
-                    add_text('imul rcx, 8')
-                    add_text('mov rbx, %s' % a[1])
-                    add_text('add rbx, rcx')
-                    add_text('mov %s, [rbx]' % reg_order[reg_c])
+                    add_text('mov rbx, [%s]' % a[2])
+                    add_text('mov %s, [%s+rbx*8]' % (reg_order[reg_c],a[1]))
                 elif index_type == 'CONSTANT':
                     add_text('mov %s, [%s + %s * 8]' %
                              (reg_order[reg_c], a[1], a[2]))
