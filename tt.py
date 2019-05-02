@@ -232,7 +232,7 @@ def if_routine(exp, stm, iselse=False):
     expression_main(exp)
     statement_main(stm)
     if iselse:
-        add_text("jmp _L%d" % (global_if_counter + 1))
+        add_text("jmp _IF%d" % (global_if_counter + 1))
     add_text("_IF%d:" % exit_c)
 
 
@@ -321,7 +321,8 @@ def statement_main(stm):
 
 def expression_main(exp, count=0):
     print(exp[0])
-    t = exp[0]
+    t = exp[1]
+    e = exp[0]
     if t in cmp_symbol:
         cmp_main(exp)
     else:

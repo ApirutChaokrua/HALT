@@ -3,4 +3,4 @@ VAR a <- 0
 
 a <- 1 + 1
 
-SHOW(a)
+SHOW("jkj"+a)
