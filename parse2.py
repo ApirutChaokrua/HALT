@@ -76,20 +76,25 @@ def p_stm(p):
 # TYPE OF NUMBER
 def p_type_num(p):
     '''
-    type_num : ID
-             | sign_number
+    type_num : sign_number
              | list_num
              | NUMBER
              | HEX_NUM
+             | MINUS_OP ID 
+             | MINUS_OP list_num
+             | ID
     '''
 
-    if type(p[1]) is str:
+    if len(p) == 3:
+        p[0] = ('EXP', '-', 0, p[2])
+    elif type(p[1]) is str:
         if p[1][:2]=="Hx" or p[1][:2]=="HX":
-            p[0] = ('HEX', int(p[1][2:],16))
+            p[0] = int(p[1][2:],16)
         else:
             p[0] = p[1]
     else:
         p[0] = p[1]
+
 
 def p_list_num(p):
     '''
@@ -99,25 +104,19 @@ def p_list_num(p):
 def p_set_num(p):
     '''
     set_num : NUMBER COMMA set_num
+            | sign_number COMMA set_num
             | NUMBER
+            | sign_number
     '''
     if(len(p) > 2):
         p[0] = ('index', p[1], p[3])
     else:
         p[0] = ('index', p[1], None)
 
-# DEFINE statement
-# def p_def_stm(p):
-#     '''
-#     def_stm : DEF ID NUMBER
-#     '''
-#     p[0] = ('DEFINE', p[2], p[3])
-
 # VAR statement
 def p_var_stm(p):
     '''
-    var_stm : VAR ID ASSIGN_OP type_num
-            | VAR ID ASSIGN_OP exp_stm
+    var_stm : VAR ID ASSIGN_OP exp_stm
             | VAR ID
     '''
     if(len(p) == 3):
@@ -139,39 +138,26 @@ def p_var_stm_list(p):
 # Assignment statement
 def p_assign_stm(p):
     '''
-    assign_stm : ID ASSIGN_OP type_num
-               | ID ASSIGN_OP exp_stm
+    assign_stm : ID ASSIGN_OP exp_stm
     '''
     p[0] = ('ASSIGN', p[1], p[3])
 
-# Assignment statement
 def p_assign_list_stm(p):
     '''
     assign_list_stm : list_num ASSIGN_OP exp_stm
-                    | list_num ASSIGN_OP type_num
     '''
     p[0] = ('ASSIGN_LIST', p[1], p[3])
 
 
-
 def p_exp_stm(p):
-    # '''
-    # exp_stm : exp_stm ADD_OP term
-    #         | exp_stm MINUS_OP term
-    # term : term MUL_OP factor
-    #      | term DIVIDE_OP factor
-    #      | factor
-    # factor : type_num
-    # '''
-
     '''exp_stm : exp_stm ADD_OP exp_stm
-        | exp_stm MINUS_OP exp_stm
-        | exp_stm MUL_OP exp_stm
-        | exp_stm DIVIDE_OP exp_stm
-        | exp_stm MOD_OP exp_stm
-        | L_BRACKET exp_stm R_BRACKET
-        | MINUS_OP L_BRACKET exp_stm R_BRACKET
-        | type_num
+                | exp_stm MINUS_OP exp_stm
+                | exp_stm MUL_OP exp_stm
+                | exp_stm DIVIDE_OP exp_stm
+                | exp_stm MOD_OP exp_stm
+                | L_BRACKET exp_stm R_BRACKET
+                | MINUS_OP L_BRACKET exp_stm R_BRACKET
+                | type_num
     '''
     if(len(p) == 4):
         if(p[1] == '('):
@@ -230,14 +216,14 @@ def p_showln_var_stm(p):
 
 def p_showln_str_stm(p):
     '''
-    show_stm : SHOWLN L_BRACKET STRING recursive_str_showln R_BRACKET
+    show_stm : SHOWLN L_BRACKET STRING recursive_showln R_BRACKET
     '''
     if(len(p) == 6):
         p[0] = ('SHOWLN', p[3], p[4])
 
 def p_showln_blank_stm(p) :
     '''
-    show_stm : SHOWLN L_BRACKET recursive_var R_BRACKET
+    show_stm : SHOWLN L_BRACKET recursive_show R_BRACKET
     '''
     # p[0] = ('SHOWLN', None, None)
     p[0] = ('SHOWLN', None, p[3])
@@ -250,23 +236,17 @@ def p_show_var_stm(p):
 
 def p_show_str_stm(p):
     '''
-    show_stm : SHOW L_BRACKET STRING recursive_str R_BRACKET
+    show_stm : SHOW L_BRACKET STRING recursive_show R_BRACKET
     '''
     if(len(p) == 6):
         p[0] = ('SHOW', p[3], p[4])
 
 def p_show_pass_rec_msg(p):
     '''
-    recursive_str : ADD_OP rec_msg
+    recursive_show : ADD_OP rec_msg
                   | ADD_OP rec_var_msg2
                   | empty
-    recursive_var : ADD_OP rec_msg
-                  | ADD_OP rec_var_msg2
-                  | empty
-    recursive_str_showln : ADD_OP rec_msg_showln
-                         | ADD_OP rec_var_msg2_showln
-                         | empty
-    recursive_var_showln : ADD_OP rec_msg_showln
+    recursive_showln : ADD_OP rec_msg_showln
                          | ADD_OP rec_var_msg2_showln
                          | empty
     '''
@@ -277,7 +257,7 @@ def p_show_pass_rec_msg(p):
 
 def p_show_rec_str_msg(p):
     '''
-    rec_msg : STRING recursive_str
+    rec_msg : STRING recursive_show
     '''
     if(len(p) == 3):
         p[0] = ("SHOW",p[1], p[2])
@@ -286,7 +266,7 @@ def p_show_rec_str_msg(p):
 
 def p_show_rec_var_msg1(p):
     '''
-    rec_var_msg1 : type_num recursive_var
+    rec_var_msg1 : type_num recursive_show
     '''
     if(len(p) == 3):
         p[0] = ("RECURSIVE_MSG",p[1], p[2])
@@ -304,7 +284,7 @@ def p_show_rec_var_msg2(p):
 
 def p_show_rec_str_msg_showln(p):
     '''
-    rec_msg_showln : STRING recursive_str_showln
+    rec_msg_showln : STRING recursive_showln
     '''
     if(len(p) == 3):
         p[0] = ("SHOWLN",p[1], p[2])
@@ -313,7 +293,7 @@ def p_show_rec_str_msg_showln(p):
 
 def p_show_rec_var_msg1_showln(p):
     '''
-    rec_var_msg1_showln : type_num recursive_var_showln
+    rec_var_msg1_showln : type_num recursive_showln
     '''
     if(len(p) == 3):
         p[0] = ("RECURSIVE_MSG",p[1], p[2])
@@ -334,11 +314,6 @@ def p_show_rec_var_msg2_showln(p):
 def p_break_stm (p):
     '''break_stm : BREAK'''
     p[0] = ('BREAK', None, None)
-
-# RETURN statement
-def p_return(p):
-    '''return : RETURN'''
-    p[0] = ('RETURN',)
 
 # A signed number.
 def p_number_signed(p):
