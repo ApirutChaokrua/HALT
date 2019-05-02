@@ -1,5 +1,8 @@
 VAR a <- 0
-
-a <- 1 + 1
-
-SHOW("jkj"+a)
+LOOP(INF){
+  a <- a+1
+  SHOW(a+" ")
+  IF a > 10 ? {
+    BREAK
+  }
+}
