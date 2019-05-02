@@ -144,7 +144,7 @@ def declare_var(var_name, value=0):
         elif val_type == 'ARRAY':
             asmdata += "%s dq 0\n" % var_name
             assign_routine(var_name, value)
-        elif val_type == 'ARRAY':
+        elif val_type == 'expression':
             asmdata += "%s dq 0\n" % var_name
             statement_main( ('ASSIGN', var_name, value ))
             print("VAR CONSTANT")
@@ -383,6 +383,7 @@ def print_routine(fmt, arg):
         if arg[0] == 'RECURSIVE_MSG':
             a = arg[1]
             a_type = get_type(a)
+            print("print_routine"+a_type)
             if a_type == 'CONSTANT':
                 add_text("mov %s, %s" % (reg_order[reg_c], a))
             elif a_type == 'ID':
@@ -410,8 +411,8 @@ def print_routine(fmt, arg):
         arg = arg[2]
 
     add_text("call " + printf_label)
-    add_text("xor rcx, rcx")
-    add_text("call " + fflush_label)
+    # add_text("xor rcx, rcx")
+    # add_text("call " + fflush_label)
     if arg[0]=='SHOW':
         print_routine(arg[1],arg[2])
 
@@ -419,7 +420,7 @@ def print_routine(fmt, arg):
 def assign_routine(dest, source):
     d_type = get_type(dest)
     s_type = get_type(source)
-    print(d_type)
+    # print(d_type)
     if s_type == 'CONSTANT':
         add_text('mov rax, ' + str(source))
     elif s_type == 'ID':
