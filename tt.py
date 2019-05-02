@@ -18,7 +18,7 @@ elif system_platform == 'Darwin':
     printf_label = '_printf'
     fflush_label = '_fflush'
 else:
-    print('Warning : Windows assembly is not supported yet. Fallback to Linux')
+    # print('Warning : Windows assembly is not supported yet. Fallback to Linux')
     asmheader = "DEFAULT REL\nextern printf\nextern scanf\nextern fflush\nglobal main\n"
     main_entry = 'main:'
     scanf_label = 'scanf'
@@ -218,7 +218,6 @@ def declare_arr(var_name, args, index):
             asmdata += "%s times %s dq 0" % (var_name, args)
         global_arr.append([var_name,args])
         asmdata += '\n'
-        print(global_arr)
 
 
 def multiple_stm_routine(stm1, stm2):
@@ -326,6 +325,7 @@ def statement_main(stm):
             'ASSIGN': assign_routine,
             'ASSIGN_LIST': assign_routine,
             'SHOW': print_routine,
+            'SHOWLN': print_routine,
             'VAR': declare_var,
             'VAR_LIST': declare_arr,
             'MULTIPLE_LINE': multiple_stm_routine,
@@ -339,6 +339,12 @@ def statement_main(stm):
             func()
         elif stm[0] == 'VAR_LIST' or stm[0] == 'VAR_LIST_VALUE':
             func(stm[1],stm[2],stm[3])
+        elif stm[0]=='SHOWLN':
+            print("SHOWLN_ro")
+            func(stm[1], stm[2],1)
+        elif stm[0]=='SHOW':
+            print("SHOW--")
+            func(stm[1], stm[2])
         else:
             func(stm[1], stm[2])
 
@@ -353,6 +359,7 @@ def expression_if(exp, count=0):
         cmp_main(exp)
 
 def expression_main(exp, count=0):
+    # print(exp[0])
     t = exp[1]
     if t in cmp_symbol:
         cmp_main(exp)
@@ -458,9 +465,15 @@ def input_routine():
     add_text("call _input")
 
 
-def print_routine(fmt, arg):
-    add_text("mov rcx, " + get_str(fmt))
+def print_routine(fmt, arg, enter=0):
+    print(fmt)
+    print(fmt+'\\n')
+    if arg[0] == 'SHOWLN': 
+        add_text("mov rcx, " + get_str(fmt+'\n'))
+    else: 
+        add_text("mov rcx, " + get_str(fmt))
     reg_c = 1
+    showEnter = False 
     while arg[1] != None :
         if arg[0] == 'RECURSIVE_MSG':
             a = arg[1]
@@ -485,17 +498,29 @@ def print_routine(fmt, arg):
                 print("no Argument")
                 expression_main(arg[1])
                 add_text("mov %s, rax" % reg_order[reg_c])
-        if arg[0] == 'SHOW':
+        if arg[0] == 'SHOW'or arg[0] == 'SHOWLN':
             print("BREAK")
             break
         reg_c += 1
         arg = arg[2]
+       
 
     add_text("call " + printf_label)
     # add_text("xor rcx, rcx")
     # add_text("call " + fflush_label)
-    if arg[0]=='SHOW':
+    if arg[1]==None:
+            print("Last:"+str(showEnter))
+            
+
+    if arg[0]=='SHOW'or arg[0] == 'SHOWLN':
         print_routine(arg[1],arg[2])
+
+    #     if arg[0]=='SHOWLN':
+    #         showEnter = True 
+    #         print("SHOWLN TRUE"+arg[1])
+    #         add_text('mov rcx, 0')
+    #         add_text("call " + printf_label)
+    
 
 
 def assign_routine(dest, source):
