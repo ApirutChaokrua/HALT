@@ -38,7 +38,7 @@ var_loop = ["_VL1" , "_VL2", "_VL3","_VL4","_VL5"]
 fun_loop = ["_L1","_L2","_L3","_L4","_L5"]
 nvl = -1
 nfl = -1
-chBreak = 'chBreak'
+chBreak = "chbreak"
 
 asmdata += "%s dq %s\n" % (chBreak, 1)
 asmdata += "%s dq %s\n" % (var_loop[0], 0)
@@ -227,7 +227,6 @@ def else_routine(stm):
 
 def loop_routing(exp, stm):
     global nvl,nfl,var_loop,fun_loop,chBreak
-    print(var_loop[0])
     nvl+=1
     nfl+=1
     if(exp != 'INF'):
@@ -267,11 +266,11 @@ def loop_routing(exp, stm):
 def break_loop():
     print("BREAKKKKKKKK")
     global nvl,nfl,var_loop,fun_loop,chBreak
-    add_text("mov [%s], 0"% (chBreak))
-    add_text("mov rcx, [%s]"% (chBreak))
-    add_text("mov [%s], 1"% (chBreak))
-    add_text("cmp rcx, 0")
-    add_text("je %sEX"% (fun_loop[nfl]))
+    # add_text("mov [%s], 0"% (chBreak))
+    # add_text("mov rcx, [%s]"% (chBreak))
+    # add_text("mov [%s], 1"% (chBreak))
+    # add_text("cmp rcx, 0")
+    add_text("jmp %sEX"% (fun_loop[nfl]))
 
 
 
@@ -293,7 +292,6 @@ def statement_main(stm):
         }
         func = switcher[state_symbol]
         if stm[0]=='BREAK':
-            print("goBREAK")
             func()
         elif stm[0] == 'VAR_LIST' or stm[0] == 'VAR_LIST_VALUE':
             func(stm[1],stm[2],stm[3])
