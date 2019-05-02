@@ -1,6 +1,1 @@
-
-VAR a <- 0
-
-a <- 1 + 1
-
-SHOW("jkj"+a)
+SHOW(1)

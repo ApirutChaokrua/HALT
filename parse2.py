@@ -199,11 +199,13 @@ def p_condition_EQ(p):
 # LOOP statement
 def p_loop_stm(p):
     '''
-    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
+    loop_stm : LOOP L_BRACKET type_num COMMA type_num  R_BRACKET L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
              | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
     '''
-    p[0] = ('LOOP', p[3], p[6])
-    
+    if len(p) == 10:
+        p[0] = ('LOOP', (p[3], p[5]), p[8])
+    else:
+        p[0] = ('LOOP', p[3], p[6])
 # SHOW statement
 def p_showln_var_stm(p):
     '''
@@ -239,10 +241,18 @@ def p_show_str_stm(p):
     if(len(p) == 6):
         p[0] = ('SHOW', p[3], p[4])
 
+def p_show_hex_stm(p):
+    '''
+    show_stm : SHOW L_BRACKET HEX L_BRACKET type_num R_BRACKET recursive_show R_BRACKET
+    show_stm : SHOW L_BRACKET hex L_BRACKET type_num R_BRACKET recursive_show R_BRACKET
+    '''
+    p[0] = ('SHOW', ('HEX',p[5]), p[7])
+
 def p_show_pass_rec_msg(p):
     '''
     recursive_show : ADD_OP rec_msg
                   | ADD_OP rec_var_msg2
+                  | ADD_OP hex_msg
                   | empty
     recursive_showln : ADD_OP rec_msg_showln
                          | ADD_OP rec_var_msg2_showln
@@ -252,6 +262,13 @@ def p_show_pass_rec_msg(p):
         p[0] = p[0] = ("RECURSIVE_MSG", None, None)
     else:
         p[0] = p[2]
+
+def p_show_rec_hex_msg(p):
+    '''
+    hex_msg : HEX L_BRACKET type_num R_BRACKET recursive_show
+            | hex L_BRACKET type_num R_BRACKET recursive_show
+    '''
+    p[0] = ("HEX",p[3], p[5])
 
 def p_show_rec_str_msg(p):
     '''
