@@ -17,21 +17,28 @@ def p_code(p):
     '''
     code : code EOL stm
          | stm
+    code_loop : code_loop EOL inside_loop_stm
+              | inside_loop_stm
     '''
     if len(p) == 4 :
         p[0] = ('MULTIPLE_LINE',p[1],p[3])
     else:
         p[0] = p[1]
 
+
 def p_stmSpace(p):
     '''
     stmSpace : stmSpace EOL code
              | EOL code
+    stmSpace_loop : stmSpace_loop EOL code_loop
+                  | EOL code_loop
     '''
     if len(p) == 4 :
         p[0] = p[3]
     else:
         p[0] = p[2]
+
+
 
 # This catch-all rule is used for any catastrophic errors.  In this case,
 # we simply return nothing
@@ -49,13 +56,14 @@ def p_stm(p):
          | exp_stm
          | loop_stm
          | show_stm
-         | break_stm
          | empty
          | stmSpace
+
+    inside_loop_stm : break_stm
+                    | stmSpace_loop
+                    | stm
     '''
     p[0] = p[1]
-
-
 
 # TYPE OF NUMBER
 def p_type_num(p):
@@ -200,8 +208,8 @@ def p_condition_EQ(p):
 # LOOP statement
 def p_loop_stm(p):
     '''
-    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET  stm  R_CURLYBRACKET
-             | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET  stm  R_CURLYBRACKET
+    loop_stm : LOOP L_BRACKET type_num R_BRACKET L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
+             | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
     '''
     p[0] = ('LOOP', p[3], p[6])
     
