@@ -85,7 +85,7 @@ def p_type_num(p):
 
     if type(p[1]) is str:
         if p[1][:2]=="Hx" or p[1][:2]=="HX":
-            p[0] = ('HEX', int(p[1][2:],16))
+            p[0] = int(p[1][2:],16)
         else:
             p[0] = p[1]
     else:

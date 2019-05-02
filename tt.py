@@ -1,6 +1,7 @@
 import sys
 import platform
 from inspect import getframeinfo, stack
+import haltlex as lex
 
 system_platform = platform.system()
 
@@ -38,7 +39,7 @@ var_loop = ["_VL1" , "_VL2", "_VL3","_VL4","_VL5"]
 fun_loop = ["_L1","_L2","_L3","_L4","_L5"]
 nvl = -1
 nfl = -1
-# chBreak = "chbreak"
+chBreak = "chbreak"
 
 asmdata += "%s dq %s\n" % (chBreak, 1)
 asmdata += "%s dq %s\n" % (var_loop[0], 0)
@@ -52,8 +53,7 @@ global_str = {}
 global_if_counter = 0
 str_prefix = '_LC'
 
-lexer = None
-
+lexer = lex.lexer
 
 def add_data(var_name, value):
     global asmdata
@@ -119,7 +119,7 @@ def get_str(text):
 
 def print_error(error_str, show_line=True):
     if show_line:
-        print("ERROR : %s At line %d" % (error_str, lexer.lineno))
+        print("ERROR : %s At line %d" % (error_str, lexer.lineno)) #fail number
     else:
         print("ERROR : %s" % error_str)
     sys.exit(1)
@@ -134,7 +134,7 @@ def error_token():
 def declare_var(var_name, value=0):
     global asmdata
     if var_name in global_var:
-        print_error("Duplicate variable")
+        print_error("Duplicate variable",show_line=True)
     else:
         global_var.append(var_name)
         val_type = get_type(value)
@@ -144,14 +144,18 @@ def declare_var(var_name, value=0):
             add_text("mov [%s], rax" % var_name)
         elif val_type == 'CONSTANT':
             asmdata += "%s dq %s\n" % (var_name, value)
-            print("CONSTANT")
+            # print("CONSTANT")
         elif val_type == 'ARRAY':
             asmdata += "%s dq 0\n" % var_name
             assign_routine(var_name, value)
         elif val_type == 'expression':
             asmdata += "%s dq 0\n" % var_name
             statement_main( ('ASSIGN', var_name, value ))
-            print("VAR CONSTANT")
+            # print("VAR CONSTANT")
+        elif val_type == 'ID':
+            asmdata += "%s dq 0\n" % var_name
+            statement_main( ('ASSIGN', var_name, value ))
+            # print("VAR ID")
         else:
             print_error('Declare variable with unsupport type.',
                         show_line=False)
@@ -177,23 +181,29 @@ def declare_string(text):
 
 def declare_arr(var_name, args, index):
     global asmdata
+    i = 0
     if var_name in global_var:
-        print_error("Duplicate variable")
+        print_error("Duplicate variable at declare array",show_line=True)
     else:
         global_var.append(var_name)
         if index[0] == 'index':
             asmdata += "%s dq " % var_name
             while index[2] != None:
                 asmdata += "%s" % index[1]
+                i+=1
                 if index[2] != 'None':
                     asmdata += ","
                     index = index[2]
                 else:
                     index[0]='None'
             asmdata += "%s" % index[1]
+            i+=1
+            if i!=(int)(args):
+                print_error("Declare array invalid '%s'" % var_name)
         else:
             # var array with size
             asmdata += "%s times %s dq 0" % (var_name, args)
+
         asmdata += '\n'
 
 
@@ -317,19 +327,17 @@ def expression_main(exp, count=0):
             '%': mod_routine,
             '(': paren_routine
         }
-
         func = switcher[t]
-        if t=='(' and get_type(exp[2])=='CONSTANT':
-            paren_alone_routine(exp[2])
-        elif t=='(' and exp[0]=='MINUS_PAREN':
+        if t=='(' and exp[0]=='MINUS_PAREN':
             minus_routine(0,exp[2])
+        elif t=='(' and get_type(exp[2])=='CONSTANT':
+            paren_alone_routine(exp[2])
         elif t=='(' and get_type(exp[2])=='ID':
             paren_alone_ID_routine(exp[2])
         elif t=='(' and get_type(exp[2])=='ARRAY':
             paren_alone_LIST_routine(exp[2])
         elif t=='(':
             func(exp[2],0)
-
         else:
             func(exp[2], exp[3], count)
 
@@ -415,12 +423,10 @@ def input_routine():
 def print_routine(fmt, arg):
     add_text("mov rcx, " + get_str(fmt))
     reg_c = 1
-    print("print_routine")
     while arg[1] != None :
         if arg[0] == 'RECURSIVE_MSG':
             a = arg[1]
             a_type = get_type(a)
-            print("print_routine"+a_type)
             if a_type == 'CONSTANT':
                 add_text("mov %s, %s" % (reg_order[reg_c], a))
             elif a_type == 'ID':
@@ -429,7 +435,6 @@ def print_routine(fmt, arg):
             elif a_type == 'ARRAY':
 
                 index_type = get_type(a[2])
-                print("print ARRAY",a[2])
                 if index_type == 'ID':
                     get_var(a[1])
                     add_text('mov rbx, [%s]' % a[2])
