@@ -1,10 +1,8 @@
-all: 
-	flex test.l
-	bison -d test.y
-	gcc -o test.exe test.tab.c
+all:
+	python ak.py
+	nasm -f win64 test.asm
+	gcc test.obj -o test.exe
 
 clean:
-	rm -rf lex.yy.c
-	rm -rf test.tab.c
-	rm -rf test.tab.h
-	rm -rf test.exe
+	rm -rf parser.out
+	rm -rf parsetab.py
