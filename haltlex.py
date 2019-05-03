@@ -3,7 +3,7 @@ import ply.lex as lex
 
 keywords = (
 
-    'VAR', 'IF', 'SHOW', 'SHOWLN', 'LOOP', 'HEX', 'hex','len'
+    'VAR', 'IF', 'SHOW', 'SHOWLN', 'LOOP', 'HEX', 'hex','len',
     'LE_OP', 'GE_OP', 'EQ_OP','LT_OP', 'GT_OP', 'NE_OP','MOD_OP', 
     'L_BRACKET', 'R_BRACKET', 'L_CURLYBRACKET', 'R_CURLYBRACKET', 'L_SBRACKET', 'R_SBRACKET',
     'ASSIGN_OP', 'ADD_OP', 'MINUS_OP', 'MUL_OP', 'DIVIDE_OP',  
