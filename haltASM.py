@@ -58,15 +58,15 @@ cmp_symbol = ['EQ_OP', 'NE_OP', 'GT_OP', 'LT_OP', 'GE_OP', 'LE_OP']
 
 
 def get_type(symbol):
-
+    
     if type(symbol) is tuple:
         if symbol[0] == 'LIST':
             return 'ARRAY'
+        if symbol[0] =='len':
+            return 'LEN'
         return 'EXP'
     if symbol == 'LIST':
         return 'ARRAY'
-    if symbol == 'input':
-        return 'INPUT'
     try:
         int(symbol)
         return 'CONSTANT'
@@ -201,6 +201,9 @@ def get_value_var(ex):
     if type_a == 'ID':
         get_var(ex)
         add_text("mov rax, [%s]" % ex)
+        return "rax"
+    elif type_a == 'EXP':
+        exp_main(ex)
         return "rax"
     elif type_a == 'CONSTANT':
         add_text("mov rax, %s" % ex)
@@ -353,14 +356,20 @@ def paren_alone_list_stm(a):
     add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
 
 def cmp_main(cmp_e):
+    
     global global_if_counter
     t = cmp_e[0]
     a = cmp_e[1]
     b = cmp_e[2]
+    
     type_a = get_type(a)
     type_b = get_type(b)
+    
     if type_a == 'EXP':
         exp_main(a)
+    elif type_a == 'LEN':
+        print("lenn of "+str(a[1]))
+        # add_text("mov rax, [%s]" % a)
     elif type_a == 'ID':
         get_var(a)
         add_text("mov rax, [%s]" % a)
@@ -383,7 +392,12 @@ def cmp_main(cmp_e):
             error_token()
 
     if type_b == 'EXP':
+        add_text('push rax')
         exp_main(b)
+        add_text('pop rax')
+    elif type_b == 'LEN':
+        print("lenn of "+str(b[1]))
+        # add_text("mov rax, [%s]" % a)
     elif type_b == 'ID':
         get_var(b)
         add_text("mov rbx, [%s]" % b)
@@ -404,6 +418,8 @@ def cmp_main(cmp_e):
             add_text('mov rbx, [%s + %s * 8]' % (b[1], b[2]))
         else:
             error_token()
+    
+    
 
     if t != '&&':
         add_text("cmp rax, rbx")
