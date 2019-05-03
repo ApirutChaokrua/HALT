@@ -108,6 +108,7 @@ def p_type_num(p):
                 | HEX_NUM
                 | list_num
                 | ID
+                | len L_BRACKET ID R_BRACKET 
 
 
 
@@ -121,6 +122,8 @@ def p_type_num(p):
             p[0] = int(p[1][2:],16)
         else:
             p[0] = p[1]
+    elif len(p) == 3:
+        p[0] = ('len', p[3])
     else:
         p[0] = p[1]
 
@@ -445,7 +448,7 @@ hparser = yacc.yacc()
 
 lines = open("test.halt", 'r').read()
 tree = hparser.parse(lines)
-# print(tree)
+print(tree)
 
 
 
