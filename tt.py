@@ -467,8 +467,12 @@ def input_routine():
     add_text("call _input")
 
 
-def print_routine(fmt, arg,enter=False):
+def print_routine(fmt, arg,enter=False,count=0):
     # print("mov rcx, " + get_str(fmt),fmt)
+    # print("len "+fmt+str(len(fmt)-2))
+    count += len(fmt)-2
+    if count > 255 :
+        print_error("String is too long (255)")
     add_text("mov rcx, " + get_str(fmt))
     reg_c = 1
     while arg[1] != None :
@@ -515,9 +519,9 @@ def print_routine(fmt, arg,enter=False):
 
     if arg[0]=='SHOW'or arg[0] == 'SHOWLN':
         if arg[0] == 'SHOWLN':
-            print_routine(arg[1],arg[2],True)
+            print_routine(arg[1],arg[2],True,count)
         else:
-            print_routine(arg[1],arg[2])
+            print_routine(arg[1],arg[2],False,count)
 
 
 
@@ -525,7 +529,7 @@ def assign_routine(dest, source):
     global global_var
     d_type = get_type(dest)
     s_type = get_type(source)
-    # print(d_type)
+    print("sss"+str(dest))
     if s_type == 'CONSTANT':
         add_text('mov rax, ' + str(source))
     elif s_type == 'ID':
