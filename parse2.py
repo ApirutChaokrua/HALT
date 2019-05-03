@@ -3,6 +3,7 @@ from ply import *
 import ply.yacc as yacc
 import haltlex
 tokens = haltlex.tokens
+import sys
 
 precedence = (
     ('right', 'ASSIGN_OP'),
@@ -384,16 +385,19 @@ def p_empty(p):
 
 # error handler
 def p_error(p):
-    print(p)
     if not p:
-        print("SYNTAX ERROR AT EOF")
+        print("Syntax ERROR AT EOF")
     else:
-        print("line: '%s'" % p.value)
+        print("Syntax ERROR : '%s' at line '%s'" % (p.value,p.lineno))
+    sys.exit(1)
 
 hparser = yacc.yacc()
 lines = open("test.halt", 'r').read()
 tree = hparser.parse(lines)
-print(tree)
+# print(tree)
+
+
+
 
 def getTree():
     return tree

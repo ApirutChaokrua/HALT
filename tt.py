@@ -134,7 +134,7 @@ def get_str(text):
 
 def print_error(error_str, show_line=True):
     if show_line:
-        print("ERROR : %s At line %d" % (error_str, lexer.lineno)) #fail number
+        print("ERROR : %s at line %d" % (error_str, lexer.lineno)) #fail number
     else:
         print("ERROR : %s" % error_str)
     sys.exit(1)

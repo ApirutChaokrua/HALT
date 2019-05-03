@@ -4,10 +4,10 @@ VAR c[2] <- {10,5}
 VAR most
 
 LOOP(INF){
-SHOWLN("most number is "+ a)
+SHOWLN(12)
 c[1]<-c[1]+1
 
-IF c[1] > 10 ? {
+IF c[11] > 10 ? {
      BREAK 
 }
 
