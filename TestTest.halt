@@ -208,25 +208,26 @@ LOOP(0,arrayLength) {
 
 palindrome
 
-VAR n <- 10
+VAR n <- 11
 VAR mid <- n/2
-VAR arr[10] <- {5,1,2,3,4,4,3,2,1,5}
+VAR arr[11] <- {1,2,3,4,5,6,5,4,3,2,1}
 VAR i <- 0
 VAR j <- n-1
 
-i <- mid % 2
+i <- n % 2
 IF i == 1 ?{
   mid <- mid+1
 }
 i <- 0
 LOOP(0,mid){
   IF arr[i] != arr[j] ?{
+    SHOWLN("BREAKK")
     BREAK
   }
   i <- i+1
   j <- j-1
 }
-i <- i-1
+SHOWLN("i : "+i+"  |  mid : "+mid)
 IF i == mid ?{
   SHOW("Array is palindrome")
 }

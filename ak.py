@@ -2,7 +2,7 @@ import parse2
 import tt
 import platform
 
-tt.statement_main(parse2.getTree())
+tt.main(parse2.getTree())
 file = open("test.asm", 'w')
 file.writelines(tt.asmheader)
 file.writelines(tt.asmdata)
