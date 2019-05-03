@@ -1,8 +1,8 @@
-import parse2
+import haltParse
 import haltASM
 import platform
 
-haltASM.main(parse2.getTree())
+haltASM.main(haltParse.getTree())
 file = open("test.asm", 'w')
 file.writelines(haltASM.asmheader)
 file.writelines(haltASM.asmdata)
