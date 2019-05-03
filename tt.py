@@ -140,7 +140,7 @@ def error_token():
 def declare_var(var_name, value=0):
     global asmdata
     if var_name in global_var:
-        print_error("Duplicate variable",show_line=True)
+        print_error("Duplicate variable"+var_name,show_line=True)
     else:
         global_var.append(var_name)
         val_type = get_type(value)
@@ -569,16 +569,11 @@ def plus_routine(a, b, count=0):
     a_type = get_type(a)
     b_type = get_type(b)
     if a_type == 'CONSTANT':
-        if count == 0:
-            add_text("mov rax, %s" % a)
-        else:
-            add_text("add rax, %s" % a)
+        add_text("mov rax, %s" % a)
+
     elif a_type == 'ID':
         get_var(a)
-        if count == 0:
-            add_text("mov rax, [%s]" % a)
-        else:
-            add_text("add rax, [%s]" % a)
+        add_text("mov rax, [%s]" % a)
     elif a_type == 'expression':
         expression_main(a, count)
     elif a_type == 'ARRAY':
@@ -589,16 +584,10 @@ def plus_routine(a, b, count=0):
             add_text('mov rcx, [%s]' % a[2])
             add_text('imul rcx, 8')
             add_text('add rbx, rcx')
-            if count == 0:
-                add_text('mov rax, [rbx]')
-            else:
-                add_text('add rax, [rbx]')
+            add_text('mov rax, [rbx]')
         elif index_type == 'CONSTANT':
             get_arr(a[1], a[2])
-            if count == 0:
-                add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
-            else:
-                add_text('add rax, [%s + %s * 8]' % (a[1], a[2]))
+            add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
     else:
         error_token()
 
@@ -634,16 +623,11 @@ def minus_routine(a, b, count=0):
     a_type = get_type(a)
     b_type = get_type(b)
     if a_type == 'CONSTANT':
-        if count == 0:
-            add_text("mov rax, %s" % a)
-        else:
-            add_text("sub rax, %s" % a)
+        add_text("mov rax, %s" % a)
     elif a_type == 'ID':
         get_var(a)
-        if count == 0:
-            add_text("mov rax, [%s]" % a)
-        else:
-            add_text("sub rax, [%s]" % a)
+        add_text("mov rax, [%s]" % a)
+        
     elif a_type == 'expression':
         expression_main(a, count)
     elif a_type == 'ARRAY':
@@ -654,16 +638,10 @@ def minus_routine(a, b, count=0):
             add_text('mov rcx, [%s]' % a[2])
             add_text('imul rcx, 8')
             add_text('add rbx, rcx')
-            if count == 0:
-                add_text('mov rax, [rbx]')
-            else:
-                add_text('sub rax, [rbx]')
+            add_text('mov rax, [rbx]')
         elif index_type == 'CONSTANT':
             get_arr(a[1],a[2])
-            if count == 0:
-                add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
-            else:
-                add_text('sub rax, [%s + %s * 8]' % (a[1], a[2]))
+            add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
     else:
         error_token()
 
@@ -781,9 +759,10 @@ def divide_routine(a, b, count=0):
 
     else:
         error_token()
+        
     count += 1
-
-    add_text('xor rdx, rdx')
+    add_text('cqo')
+    # add_text('xor rdx, rdx')
     if b_type == 'CONSTANT':
         add_text('mov rcx, %s' % b)
         add_text('idiv rcx')
@@ -845,7 +824,7 @@ def mod_routine(a, b, count=0):
 
     count += 1
 
-    add_text('xor rdx, rdx')
+    add_text('cqo')
     if b_type == 'CONSTANT':
         add_text('mov rcx, %s' % b)
         add_text('idiv rcx')
