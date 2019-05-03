@@ -226,7 +226,6 @@ def if_routine(exp, stm):
     expression_if(exp)
     statement_main(stm)
 
-    print("ENDIF")
     add_text("_EXIF%d:" % exit_c)
 
 
