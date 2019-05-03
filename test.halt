@@ -1,9 +1,30 @@
+VAR a <- 20
+VAR b <- 13
+VAR c <- 10
+VAR most
 
-#VAR i <- 0
-#VAR a[5]<-{1,2,3,4,5}
-VAR a <-255
-SHOWLN("ddd"+"uuu"+"ssss")
-SHOWLN("ssddff")
-SHOWLN("a: "+ hex(a))
-SHOWLN("enter")
-SHOW("ssddffsss")
+IF b > a ?{
+    IF b >= c ?{
+      SHOW("aaa \n")
+      most <- b
+    }
+    IF c >= b ?{
+      SHOW("bbb \n" )
+      most <- c
+    }
+}
+
+IF a > b ?{
+    IF a >= c ?{
+      SHOW("ccc \n")
+      most <- a
+    }
+    IF c >= a ?{
+      SHOW("ddd \n")
+      most <- c
+    }
+}
+IF a < b ?{
+  SHOW("KUY \n")
+}
+SHOW("most number is "+ most)
