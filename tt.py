@@ -140,7 +140,7 @@ def error_token():
 def declare_var(var_name, value=0):
     global asmdata
     if var_name in global_var:
-        print_error("Duplicate variable",show_line=True)
+        print_error("Duplicate variable"+var_name,show_line=True)
     else:
         global_var.append(var_name)
         val_type = get_type(value)
@@ -781,9 +781,10 @@ def divide_routine(a, b, count=0):
 
     else:
         error_token()
+        
     count += 1
-
-    add_text('xor rdx, rdx')
+    add_text('cqo')
+    # add_text('xor rdx, rdx')
     if b_type == 'CONSTANT':
         add_text('mov rcx, %s' % b)
         add_text('idiv rcx')
@@ -845,7 +846,7 @@ def mod_routine(a, b, count=0):
 
     count += 1
 
-    add_text('xor rdx, rdx')
+    add_text('cqo')
     if b_type == 'CONSTANT':
         add_text('mov rcx, %s' % b)
         add_text('idiv rcx')

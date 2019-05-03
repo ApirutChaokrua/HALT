@@ -424,13 +424,13 @@ def p_error(p):
 hparser = yacc.yacc()
 lines = open("test.halt", 'r').read()
 tree = hparser.parse(lines)
-# print(tree)
+print(tree)
 
 
 
 
-# def getTree():
-#     return tree
+def getTree():
+    return tree
 
 
 # while True:
