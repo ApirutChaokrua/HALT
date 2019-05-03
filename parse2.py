@@ -440,7 +440,7 @@ hparser = yacc.yacc()
 
 lines = open("test.halt", 'r').read()
 tree = hparser.parse(lines)
-print(tree)
+# print(tree)
 
 
 
