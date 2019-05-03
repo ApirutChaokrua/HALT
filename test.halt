@@ -1,25 +1,16 @@
-VAR n <- 10
-VAR mid <- n/2
-VAR arr[10] <- {5,1,2,3,4,4,3,2,1,5}
-VAR i <- 0
-VAR j <- n-1
-
-i <- mid % 2
-IF i == 1 ?{
-  mid <- mid+1
-}
-i <- 0
-LOOP(0,mid){
-  IF arr[i] != arr[j] ?{
-    BREAK
+VAR a <- 5
+VAR i <- 1
+VAR j <- a - 1
+LOOP(0,a){
+  IF j > 0 ?{
+    LOOP(0,j){
+      SHOW(" ")
+    }
+  }
+  LOOP(0,i){
+    SHOW("* ")
   }
   i <- i+1
-  j <- j-1
-}
-i <- i-1
-IF i == mid ?{
-  SHOW("Array is palindrome")
-}
-IF i != mid ?{
-  SHOW("Array is not palindrome")
+  j<- j-1
+  SHOWLN()
 }
