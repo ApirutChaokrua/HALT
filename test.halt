@@ -1,6 +1,31 @@
-VAR a <- 5
-VAR b <- 20
-VAR v[2] <- {-1, -5} 
+VAR i <- 1
+VAR j <- 1
+VAR row <- 6
+VAR column <- 1
 
-#SHOW(a + "  asdasd  " + a + v[1] + v[0] + -b + -v[1])
-SHOW(hex(v[1]))
+SHOWLN(" _ _ _ _ _ _ _ _")
+LOOP(0,8){
+  j <- 1
+  LOOP(0,8){
+    IF i == row ?{
+      IF j == column ?{
+        SHOW("|R")
+      }
+      IF j != column ?{
+        SHOW("|X")
+      }
+    }
+    IF j == column ?{
+      SHOW("|X")
+    }
+    IF i != row ?{
+      IF j != column ?{
+        SHOW("| ")
+      }
+    }
+    j <- j+1
+  }
+  SHOWLN("|")
+  SHOWLN(" _ _ _ _ _ _ _ _")
+  i <- i+1
+}
