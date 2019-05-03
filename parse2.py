@@ -103,6 +103,11 @@ def p_type_num(p):
                  | ID
     type_list_num : ID
                   | NUMBER
+    type_if_num : sign_number
+             | NUMBER
+             | HEX_NUM
+             | list_num
+             | ID
 
 
 
@@ -210,27 +215,27 @@ def p_if_stm(p):
 
 
 def p_condition_LE(p):
-    'condition : exp_stm LE_OP exp_stm'
+    'condition : type_if_num LE_OP type_if_num'
     p[0] = ('LE_OP', p[1], p[3])
 
 def p_condition_GE(p):
-    'condition : exp_stm GE_OP exp_stm'
+    'condition : type_if_num GE_OP type_if_num'
     p[0] = ('GE_OP', p[1], p[3])
 
 def p_condition_less(p):
-    '''condition : exp_stm LT_OP exp_stm'''
+    '''condition : type_if_num LT_OP type_if_num'''
     p[0] = ('LT_OP', p[1], p[3])
 
 def p_condition_great(p):
-    '''condition : exp_stm GT_OP exp_stm'''
+    '''condition : type_if_num GT_OP type_if_num'''
     p[0] = ('GT_OP', p[1], p[3])
 
 def p_condition_EQ(p):
-    '''condition : exp_stm EQ_OP exp_stm'''
+    '''condition : type_if_num EQ_OP type_if_num'''
     p[0] = ('EQ_OP', p[1], p[3])
 
 def p_condition_NE(p):
-    '''condition : exp_stm NE_OP exp_stm'''
+    '''condition : type_if_num NE_OP type_if_num'''
     p[0] = ('NE_OP', p[1], p[3])
 
 # LOOP statement
