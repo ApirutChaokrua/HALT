@@ -84,7 +84,7 @@ add_text(main_entry)
 add_text("push rbp")
 
 
-cmp_symbol = ['EQ_OP', '!=', 'GT_OP', 'LT_OP', 'GE_OP', 'LE_OP', '&&']
+cmp_symbol = ['EQ_OP', 'NE_OP', 'GT_OP', 'LT_OP', 'GE_OP', 'LE_OP']
 
 
 def get_type(symbol):
@@ -457,7 +457,7 @@ def cmp_main(cmp_e):
         'LT_OP': less_routine,
         'LE_OP': less_equ_routine,
         'GE_OP': greater_equ_routine,
-        '&&': and_routine
+        'NE_OP': not_equal_routine
     }
     func = switcher[t]
     func()
@@ -884,8 +884,7 @@ def mod_routine(a, b, count=0):
         error_token()
 
 
-def and_routine():
-    pass
+
 
 
 def less_equ_routine():
