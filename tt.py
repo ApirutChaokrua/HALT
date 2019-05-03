@@ -66,6 +66,8 @@ def add_text(cmd):
 
 
 # init
+
+add_data("NewLine","\"\",10, 0")
 # sys_input
 # add_data("_fmin", "\"%ld\", 0")
 # add_text("_input:")
@@ -299,10 +301,8 @@ def statement_main(stm):
         elif stm[0] == 'VAR_LIST' or stm[0] == 'VAR_LIST_VALUE':
             func(stm[1],stm[2],stm[3])
         elif stm[0]=='SHOWLN':
-            print("SHOWLN_ro")
-            func(stm[1], stm[2],1)
+            func(stm[1], stm[2],True)
         elif stm[0]=='SHOW':
-            print("SHOW--")
             func(stm[1], stm[2])
         else:
             func(stm[1], stm[2])
@@ -424,15 +424,10 @@ def input_routine():
     add_text("call _input")
 
 
-def print_routine(fmt, arg, enter=0):
-    print(fmt)
-    print(fmt+'\\n')
-    if arg[0] == 'SHOWLN': 
-        add_text("mov rcx, " + get_str(fmt+'\n'))
-    else: 
-        add_text("mov rcx, " + get_str(fmt))
+def print_routine(fmt, arg,enter=False):
+    # print("mov rcx, " + get_str(fmt),fmt)
+    add_text("mov rcx, " + get_str(fmt))
     reg_c = 1
-    showEnter = False 
     while arg[1] != None :
         if arg[0] == 'RECURSIVE_MSG':
             a = arg[1]
@@ -458,21 +453,28 @@ def print_routine(fmt, arg, enter=0):
                 expression_main(arg[1])
                 add_text("mov %s, rax" % reg_order[reg_c])
         if arg[0] == 'SHOW'or arg[0] == 'SHOWLN':
-            print("BREAK")
+            # print("BREAK -> print"+arg[1])
+            if arg[0] == 'SHOWLN':
+                enter=True
             break
         reg_c += 1
         arg = arg[2]
-       
+        
 
     add_text("call " + printf_label)
+    # print("call printf"+str(arg[0]))
+    if arg[1]==None and enter==True:
+        add_text("mov rcx ,NewLine")
+        add_text("call " + printf_label)
+                
     # add_text("xor rcx, rcx")
-    # add_text("call " + fflush_label)
-    if arg[1]==None:
-            print("Last:"+str(showEnter))
-            
+    # add_text("call " + fflush_label)            
 
     if arg[0]=='SHOW'or arg[0] == 'SHOWLN':
-        print_routine(arg[1],arg[2])
+        if arg[0] == 'SHOWLN':
+            print_routine(arg[1],arg[2],True)
+        else:
+            print_routine(arg[1],arg[2])
 
     #     if arg[0]=='SHOWLN':
     #         showEnter = True 

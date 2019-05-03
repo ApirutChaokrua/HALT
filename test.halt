@@ -1,8 +1,9 @@
 
 #VAR i <- 0
 #VAR a[5]<-{1,2,3,4,5}
-VAR a <- 255-16
-#SHOWLN("ddd"+"uuu")
-SHOW("ssdd\nff")
-SHOW("a: "+ hex(a))
-
+VAR a <-255
+SHOWLN("ddd"+"uuu"+"ssss")
+SHOWLN("ssddff")
+SHOWLN("a: "+ hex(a))
+SHOWLN("enter")
+SHOW("ssddffsss")
