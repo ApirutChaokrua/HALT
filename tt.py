@@ -36,24 +36,14 @@ reg_order = ["rcx", "rdx", "r8", "r9"]
 global_var = []
 global_arr = []
 
-var_loop = ["_VL1" , "_VL2", "_VL3","_VL4","_VL5"]
-vare_loop = ["_VEL1" , "_VEL2", "_VEL3","_VEL4","_VEL5"]
-fun_loop = ["_L1","_L2","_L3","_L4","_L5"]
+var_loop = ["_VL1"]
+vare_loop = ["_VEL1"]
+fun_loop = ["_L1"]
 nvl = -1
 nfl = -1
 
-# asmdata += "%s dq %s\n" % (chBreak, 1)
 asmdata += "%s dq %s\n" % (var_loop[0], 0)
-asmdata += "%s dq %s\n" % (var_loop[1], 0)
-asmdata += "%s dq %s\n" % (var_loop[2], 0)
-asmdata += "%s dq %s\n" % (var_loop[3], 0)
-asmdata += "%s dq %s\n" % (var_loop[4], 0)
-
 asmdata += "%s dq %s\n" % (vare_loop[0], 0)
-asmdata += "%s dq %s\n" % (vare_loop[1], 0)
-asmdata += "%s dq %s\n" % (vare_loop[2], 0)
-asmdata += "%s dq %s\n" % (vare_loop[3], 0)
-asmdata += "%s dq %s\n" % (vare_loop[4], 0)
 
 global_str_counter = 0
 global_str = {}
@@ -263,22 +253,30 @@ def getValueVarible(ex):
             add_text('mov rax, [%s + %s * 8]' %( ex[1], ex[2]))
             return 'rax'
 
-# reg_order = ["rcx", "rdx", "r8", "r9"]
+
 def loop_routing(exp, stm):
-    global nvl,nfl,var_loop,fun_loop,chBreak
+    global nvl,nfl,var_loop,fun_loop,chBreak,asmdata
     nvl+=1
     nfl+=1
-    if(exp != 'INF'):
-        print("!INF")
-        b=getValueVarible(exp[1])
+    if len(var_loop) < nvl+1 :
+        var_loop.append("_VL"+str(nvl+1))
+        vare_loop.append("_VEL"+str(nvl+1))
+        fun_loop.append("_L"+str(nvl+1))
+        asmdata += "%s dq %s\n" % (var_loop[nvl], 0)
+        asmdata += "%s dq %s\n" % (vare_loop[nvl], 0)
 
+    if(exp != 'INF'):
+        if isinstance(exp[1],int) and isinstance(exp[0],int):
+            if exp[0] > exp[1]:
+                print_error("invalid syntax")
+
+        b=getValueVarible(exp[1])
         add_text("mov rcx, %s" % (b))
         add_text("mov [%s], rcx" % (var_loop[nvl]))
 
         a=getValueVarible(exp[0])
         add_text("mov rcx, %s" % (a))
         add_text("mov [%s], rcx" % (vare_loop[nvl]))
-
         add_text("%s:" % (fun_loop[nfl]))
 
         if stm != None:
@@ -506,16 +504,16 @@ def print_routine(fmt, arg,enter=False,count=0):
             break
         reg_c += 1
         arg = arg[2]
-        
+
 
     add_text("call " + printf_label)
     # print("call printf"+str(arg[0]))
     if arg[1]==None and enter==True:
         add_text("mov rcx ,NewLine")
         add_text("call " + printf_label)
-                
+
     # add_text("xor rcx, rcx")
-    # add_text("call " + fflush_label)            
+    # add_text("call " + fflush_label)
 
     if arg[0]=='SHOW'or arg[0] == 'SHOWLN':
         if arg[0] == 'SHOWLN':
