@@ -1,30 +1,14 @@
-VAR a <- 20
-VAR b <- 13
-VAR c <- 10
+VAR a <- 0
+VAR b[10] <- {1,2,3,4,5,6,7,8,9,10}
+VAR c[2] <- {10,5}
 VAR most
 
-IF b > a ?{
-    IF b >= c ?{
-      SHOW("aaa \n")
-      most <- b
-    }
-    IF c >= b ?{
-      SHOW("bbb \n" )
-      most <- c
-    }
+LOOP(INF){
+SHOWLN("most number is "+ a)
+c[1]<-c[1]+1
+
+IF c[1] > 10 ? {
+     BREAK 
 }
 
-IF a > b ?{
-    IF a >= c ?{
-      SHOW("ccc \n")
-      most <- a
-    }
-    IF c >= a ?{
-      SHOW("ddd \n")
-      most <- c
-    }
 }
-IF a < b ?{
-  SHOW("KUY \n")
-}
-SHOW("most number is "+ most)

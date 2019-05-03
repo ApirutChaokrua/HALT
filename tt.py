@@ -121,9 +121,9 @@ def get_var(symbol):
 
 def get_arr(ID,num):
     for i in global_arr :
-        if (i[0]==ID and num>=0 and num<int(i[1])):
+        if (i[0]==ID and int(num)>=0 and num<int(i[1])):
                 return ID
-    print_error("out of range %s" % ID)
+    print_error("out of range '%s' " % ID)
 
 
 def get_str(text):
@@ -256,12 +256,12 @@ def getValueVarible(ex):
         if index_type == 'ID':
             get_var(ex[2])
             add_text('mov rbx, [%s]' % ex[2])
-            add_text('mov %s, [%s+rbx*8]' % (reg_order[reg_c],ex[1]))
-            return '%s'%reg_order[reg_c]
+            add_text('mov rax,[%s+rbx*8]' % (ex[1]))
+            return 'rax'
         elif index_type == 'CONSTANT':
             get_arr(ex[1],ex[2])
-            add_text('mov %s, [%s + %s * 8]' %(reg_order[reg_c], ex[1], ex[2]))
-            return '%s'%reg_order[reg_c]
+            add_text('mov rax, [%s + %s * 8]' %( ex[1], ex[2]))
+            return 'rax'
 
 # reg_order = ["rcx", "rdx", "r8", "r9"]
 def loop_routing(exp, stm):
@@ -421,6 +421,7 @@ def cmp_main(cmp_e):
             add_text('add rbx, rcx')
             add_text('mov rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(a[1],a[2])
             add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
         else:
             error_token()
@@ -443,6 +444,7 @@ def cmp_main(cmp_e):
             add_text('add rbx, rcx')
             add_text('mov rbx, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(a[1],a[2])
             add_text('mov rbx, [%s + %s * 8]' % (b[1], b[2]))
         else:
             error_token()
@@ -557,6 +559,7 @@ def assign_routine(dest, source):
             add_text('add rbx, rcx')
             add_text('mov [rbx], rax')
         elif index_type == 'CONSTANT':
+            get_arr(dest[1], dest[2])
             add_text('mov [%s + %s * 8], rax' % (dest[1], dest[2]))
     else:
         get_var(dest)
@@ -592,6 +595,7 @@ def plus_routine(a, b, count=0):
             else:
                 add_text('add rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(a[1], a[2])
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
@@ -620,6 +624,7 @@ def plus_routine(a, b, count=0):
             add_text('add rbx, rcx')
             add_text('add rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(b[1], b[2])
             add_text('add rax, [%s + %s * 8]' % (b[1], b[2]))
 
     else:
@@ -655,6 +660,7 @@ def minus_routine(a, b, count=0):
             else:
                 add_text('sub rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(a[1],a[2])
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
@@ -686,6 +692,7 @@ def minus_routine(a, b, count=0):
             add_text('add rbx, rcx')
             add_text('sub rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(b[1], b[2])
             add_text('sub rax, [%s + %s * 8]' % (b[1], b[2]))
     else:
         error_token()
@@ -721,6 +728,7 @@ def multiply_routine(a, b, count=0):
                 add_text('mov rax, [rbx]')
                 # add_text('imul rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(a[1], a[2])
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
@@ -749,6 +757,7 @@ def multiply_routine(a, b, count=0):
             add_text('add rbx, rcx')
             add_text('imul rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(b[1], b[2])
             add_text('imul rax, [%s + %s * 8]' % (b[1], b[2]))
     else:
         error_token()
@@ -789,6 +798,7 @@ def divide_routine(a, b, count=0):
                 # add_text('mov rcx, [rbx]')
                 # add_text('idiv rcx')
         elif index_type == 'CONSTANT':
+            get_arr(a[1], a[2])
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
@@ -825,6 +835,7 @@ def divide_routine(a, b, count=0):
             add_data('mov rcx, [rbx]')
             add_text('idiv rcx')
         elif index_type == 'CONSTANT':
+            get_arr(b[1], b[2])
             add_text('mov rcx, [%s + %s * 8]' % (b[1], b[2]))
             add_text('idiv rcx')
     else:
@@ -867,6 +878,7 @@ def mod_routine(a, b, count=0):
                 # add_text('idiv rcx')
                 # add_text('mov rax, rdx')
         elif index_type == 'CONSTANT':
+            get_arr(a[1], a[2])
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
@@ -909,6 +921,7 @@ def mod_routine(a, b, count=0):
             add_text('idiv rcx')
             add_text('mov rax, rdx')
         elif index_type == 'CONSTANT':
+            get_arr(b[1], b[2])
             add_text('mov rcx, [%s + %s * 8]' % (b[1], b[2]))
             add_text('idiv rcx')
             add_text('mov rax, rdx')
