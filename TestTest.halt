@@ -1,0 +1,207 @@
+# calculate volume of sphere
+
+VAR r <- 5
+VAR v <- (4/3)*(22/7)*r*r*r
+SHOW("Volume of sphere : " + v)
+
+##########################################
+
+
+
+
+##########################################
+
+# check if a number is origin(zero) , positive or negative 
+
+VAR number <- -14
+IF number == 0 ? {
+     SHOW("Number "+number+" is origin")
+}
+IF number > 0 ? {
+    SHOW("Number "+number+" is positive")
+}
+IF number < 0 ? {
+     SHOW("Number "+number+" is negative")
+}
+
+##########################################
+
+# check if a number is even or odd
+
+VAR number <- 15
+IF number%2 == 0 ? {
+     SHOW("Number "+number+" is even")
+}
+IF number%2 == 1 ? {
+    SHOW("Number "+number+" is odd")
+}
+
+
+##########################################
+
+# find LCM (least common multiply) of 2 numbers
+VAR a <- 6
+VAR b <- 8
+VAR end <- a*b
+VAR LCM <- 1
+LOOP(0,end) {
+    IF LCM % a == 0 ? {
+        IF LCM % b == 0 ? {
+            SHOW("LCM of "+a+", "+b+" is "+LCM)
+            BREAK
+        }
+    }
+    LCM <- LCM + 1
+}
+
+##########################################
+
+# find GCD (greatest common divisor) of 2 numbers
+VAR a <- 12
+VAR b <- 18
+VAR GCD <- 1
+VAR count <- 1
+VAR end <- a
+IF a > b ? {
+    end <- b
+}
+
+LOOP(0,end) {
+    IF a % count == 0 ? {
+        IF b % count == 0 ? {
+            GCD <- count
+        }
+    }
+    count <- count+1
+}
+
+SHOW("GCD of "+a+", "+b+" is "+GCD)
+
+##########################################
+
+# sum of an array
+
+VAR num[5] <- {1,2,3,4,5}
+VAR arrayLength <- 5
+VAR i <- 0
+VAR sum <- 0
+LOOP(0,arrayLength) {
+    sum <- sum + num[i]
+    i <- i+1
+}
+SHOW("Sum of an array is "+sum)
+
+#############################################
+
+# find most number of an array[20]
+
+VAR arr[20] = {1,2,3,4,5,6,7,8,9,10,20,11,12,13,14,15,16,17,18,19}
+VAR arrayLength <- 20
+VAR i <- 0
+VAR most <- 0
+LOOP (0,arrayLength) {
+    IF arr[i] > most ? {
+        most <- arr[i]
+    }
+    i <- i+1
+}
+SHOW("Most number of array is "+most)
+
+#############################################
+
+# print half pyramid using *
+
+VAR row <- 5
+VAR i <- 1
+
+LOOP(0,row) {
+    LOOP(0,i) {
+        SHOW("*")
+    }
+    i <- i+1
+}
+
+#############################################
+
+# print half pyramid using number
+
+VAR row <- 5
+VAR i <- 1
+VAR j <- 1
+
+LOOP(0,row) {
+    j <- 1
+    LOOP(0,i) {
+        SHOW(j+" ")
+        j <- j+1
+    }
+    i <- i+1
+}
+
+#############################################
+
+# check prime number
+
+VAR number <- 17
+VAR start <- 2
+VAR end <- number / 2
+VAR i <- start
+VAR flag <- 0
+
+LOOP(start,end) {
+    IF number % i == 0 ? {
+        flag <- 1
+        BREAK
+    }
+    i <- i+1
+}
+
+IF flag == 0 ? {
+    SHOW(number + " is a prime number)
+}
+IF flag == 1 ? {
+    SHOW(number + " is not a prime number)
+}
+
+#############################################
+
+# bubble sort
+
+VAR arr[5] <- {5,1,3,4,2}
+VAR arrayLength <- 5
+VAR i <- 0
+VAR j <- 0
+VAR temp
+VAR end
+VAR nextJ
+
+LOOP(0,arrayLength) {
+    end <- arrayLength-i
+    j <- 0
+    LOOP(0,end) {
+        nextJ <- j+1
+        IF arr[j] > arr[nextJ] ? {
+            temp <- arr[nextJ]
+            arr[nextJ] <- arr[j]
+            arr[j] <- temp
+        }
+        j <- j+1
+    }
+    i <- i+1
+}
+
+i <- 0
+SHOW("Before : ")
+LOOP(0,arrayLength) {
+    SHOW(arr[i] + " ")
+    i <- i+1
+}
+SHOWLN()
+i <- 0
+SHOW("After : ")
+LOOP(0,arrayLength) {
+    SHOW(arr[i] + " ")
+    i <- i+1
+}
+
+#############################################
