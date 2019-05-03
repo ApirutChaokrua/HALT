@@ -1,11 +1,9 @@
-VAR a <- 0
-VAR b[10] <- {1,2,3,4,5,6,7,8,9,10}
+VAR n <- 10
+VAR mid <- n/2
+VAR arr[10] <- {5,1,10,3,8,9,2,4,6,7}
+VAR i <- 0
+VAR j <- n
 
-LOOP (0,5){
-  LOOP (0,3){
-    SHOW("a ")
-  }
-  LOOP (0,10){
-    SHOW("b ")
-  }
+IF 1 != 5 ?{
+  SHOW("luy")
 }
