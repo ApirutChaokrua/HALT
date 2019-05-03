@@ -269,7 +269,7 @@ def p_showln_var_stm(p):
     '''
     show_stm : SHOWLN L_BRACKET rec_var_msg1_showln R_BRACKET
     '''
-    p[0] = ('SHOWLN', '"%ld"', p[3])
+    p[0] = ('SHOWLN', '"%lld"', p[3])
 
 
 def p_showln_str_stm(p):
@@ -296,7 +296,7 @@ def p_show_var_stm(p):
     '''
     show_stm : SHOW L_BRACKET rec_var_msg1 R_BRACKET
     '''
-    p[0] = ('SHOW', '"%ld"', p[3])
+    p[0] = ('SHOW', '"%lld"', p[3])
 
 def p_show_str_stm(p):
     '''
@@ -366,7 +366,7 @@ def p_show_rec_var_msg2(p):
     rec_var_msg2 : rec_var_msg1
     '''
     if(len(p) == 2):
-        p[0] = ("SHOW",'"%ld"', p[1])
+        p[0] = ("SHOW",'"%lld"', p[1])
     else :
         p[0] = ("RECURSIVE_MSG", None, None)
 
@@ -393,7 +393,7 @@ def p_show_rec_var_msg2_showln(p):
     rec_var_msg2_showln : rec_var_msg1_showln
     '''
     if(len(p) == 2):
-        p[0] = ("SHOWLN",'"%ld"', p[1])
+        p[0] = ("SHOWLN",'"%lld"', p[1])
     else :
         p[0] = ("RECURSIVE_MSG", None, None)
 
