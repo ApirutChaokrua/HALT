@@ -269,7 +269,7 @@ def loop_routing(exp, stm):
 
     if(exp != 'INF'):
         if isinstance(exp[1],int) and isinstance(exp[0],int):
-            if exp[0] > exp[1]:
+            if exp[0] >= exp[1]:
                 print_error("invalid syntax")
 
         b=getValueVarible(exp[1])
@@ -751,7 +751,7 @@ def divide_routine(a, b, count=0):
             add_text('imul rcx, 8')
             add_text('add rbx, rcx')
             add_text('mov rax, [rbx]')
-         
+
         elif index_type == 'CONSTANT':
             get_arr(a[1], a[2])
             add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
