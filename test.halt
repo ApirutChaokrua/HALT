@@ -1,5 +1,6 @@
-VAR a<- 5
-IF -3 < -a ? {
-  SHOW("hh")
+VAR a <- 5
+VAR b <- 20
+VAR v[2] <- {-1, -5} 
 
-}
+#SHOW(a + "  asdasd  " + a + v[1] + v[0] + -b + -v[1])
+SHOW(hex(v[1]))

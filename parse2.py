@@ -104,10 +104,10 @@ def p_type_num(p):
     type_list_num : ID
                   | NUMBER
     type_if_num : sign_number
-             | NUMBER
-             | HEX_NUM
-             | list_num
-             | ID
+                | NUMBER
+                | HEX_NUM
+                | list_num
+                | ID
 
 
 
@@ -241,8 +241,8 @@ def p_condition_NE(p):
 # LOOP statement
 def p_loop_stm(p):
     '''
-    loop_stm : LOOP L_BRACKET type_num COMMA type_num  R_BRACKET EOL L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
-             | LOOP L_BRACKET type_num COMMA type_num  R_BRACKET  L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
+    loop_stm : LOOP L_BRACKET type_if_num COMMA type_if_num  R_BRACKET EOL L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
+             | LOOP L_BRACKET type_if_num COMMA type_if_num  R_BRACKET  L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
              | LOOP L_BRACKET INF R_BRACKET EOL L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
              | LOOP L_BRACKET INF R_BRACKET L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
     '''
@@ -256,17 +256,17 @@ def p_loop_stm(p):
     else :
         p[0] = ('LOOP', p[3], p[6])
 
-def p_loop_stm_error(p):
-    '''
-    loop_stm : LOOP L_BRACKET type_num COMMA type_num  error L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
-             | LOOP L_BRACKET INF error L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
-    '''
-    if len(p) == 10:
-        errline = p.lineno(6)
-        print("Syntax error in LOOP statement. Bad expression at line:",errline,  " '%s'"% p[7])
-    else :
-        errline = p.lineno(4)
-        print("Syntax error in LOOP statement. Bad expression at line:",errline,  " '%s'"% p[5])
+# def p_loop_stm_error(p):
+#     '''
+#     loop_stm : LOOP L_BRACKET type_num COMMA type_num  error L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
+#              | LOOP L_BRACKET INF error L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
+#     '''
+#     if len(p) == 10:
+#         errline = p.lineno(6)
+#         print("Syntax error in LOOP statement. Bad expression at line:",errline,  " '%s'"% p[7])
+#     else :
+#         errline = p.lineno(4)
+#         print("Syntax error in LOOP statement. Bad expression at line:",errline,  " '%s'"% p[5])
 
 # SHOW statement
 def p_showln_var_stm(p):
