@@ -4,6 +4,8 @@ import ply.yacc as yacc
 import haltlex
 tokens = haltlex.tokens
 
+
+
 precedence = (
     ('right', 'ASSIGN_OP'),
     ('left', 'ADD_OP', 'MINUS_OP'),
@@ -51,7 +53,6 @@ def p_stm(p):
          | assign_stm
          | assign_list_stm
          | if_stm
-         | exp_stm
          | loop_stm
          | show_stm
          | empty
@@ -62,7 +63,6 @@ def p_stm(p):
                     | var_stm
                     | assign_stm
                     | assign_list_stm
-                    | exp_stm
                     | loop_stm
                     | show_stm
                     | empty
@@ -70,6 +70,15 @@ def p_stm(p):
 
     '''
     p[0] = p[1]
+
+def p_stm_error(p):
+    '''
+    stm : exp_stm
+    inside_loop_stm : exp_stm
+    '''
+    errline = p.lineno(1)
+    print("Syntax error in statement. Bad expression at line:", '-',  " '%s'"% p[1])
+
 
 # TYPE OF NUMBER
 def p_type_num(p):
@@ -186,6 +195,14 @@ def p_if_stm(p):
     '''
     p[0] = ('IF', p[2], p[5])
 
+def p_if_stm_error(p):
+    '''
+    if_stm      :  IF condition error L_CURLYBRACKET stm                R_CURLYBRACKET
+    if_stm_loop :  IF condition error L_CURLYBRACKET inside_loop_stm    R_CURLYBRACKET
+    '''
+    errline = p.lineno(3)
+    print("Syntax error in IF statement. Bad expression at line:", errline,  " '%s'"% p[4])
+
 def p_condition_LE(p):
     'condition : exp_stm LE_OP exp_stm'
     p[0] = ('LE_OP', p[1], p[3])
@@ -216,6 +233,19 @@ def p_loop_stm(p):
         p[0] = ('LOOP', (p[3], p[5]), p[8])
     else:
         p[0] = ('LOOP', p[3], p[6])
+    
+def p_loop_stm_error(p):
+    '''
+    loop_stm : LOOP L_BRACKET type_num COMMA type_num  error L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
+             | LOOP L_BRACKET INF error L_CURLYBRACKET  inside_loop_stm  R_CURLYBRACKET
+    '''
+    if len(p) == 10:
+        errline = p.lineno(6)
+        print("Syntax error in LOOP statement. Bad expression at line:",errline,  " '%s'"% p[7])
+    else : 
+        errline = p.lineno(4)
+        print("Syntax error in LOOP statement. Bad expression at line:",errline,  " '%s'"% p[5])
+
 # SHOW statement
 def p_showln_var_stm(p):
     '''
@@ -384,19 +414,19 @@ def p_empty(p):
 
 # error handler
 def p_error(p):
-    print(p)
-    if not p:
-        print("SYNTAX ERROR AT EOF")
-    else:
-        print("line: '%s'" % p.value)
+        if not p:
+            print("SYNTAX ERROR ")        # error at { 
+        else:
+            print("SYNTAX ERROR AT: '%s'" % p.value)
+        return p
 
 hparser = yacc.yacc()
 lines = open("test.halt", 'r').read()
 tree = hparser.parse(lines)
 print(tree)
 
-def getTree():
-    return tree
+# def getTree():
+#     return tree
 
 
 # while True:
@@ -407,11 +437,11 @@ def getTree():
 #     tree = hparser.parse(s)
 #     print(tree)
 
-# def parse(data, debug=0):
-#     print('EEOEOEOEOEO')
-#     hparser.error = 0
-#     p = hparser.parse(data, debug=debug)
-#     if hparser.error:
-#         print("hparser error")
-#         return None
-#     return p
+def parse(data, debug=0):
+    print('EEOEOEOEOEO')
+    hparser.error = 0
+    p = hparser.parse(data, debug=debug)
+    if hparser.error:
+        print("hparser error")
+        return None
+    return p
