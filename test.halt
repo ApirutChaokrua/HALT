@@ -1,0 +1,19 @@
+<<<<<<< HEAD
+=======
+VAR a <- 5
+VAR i <- 1
+VAR j <- a - 1
+LOOP(0,a){
+  IF j > 0 ?{
+    LOOP(0,j){
+      SHOW(" ")
+    }
+  }
+  LOOP(0,i){
+    SHOW("* ")
+  }
+  i <- i+1
+  j<- j-1
+  SHOWLN()
+}
+>>>>>>> f62438693a5c06d78f7751a6d91a470d238eed36
