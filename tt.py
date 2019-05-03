@@ -92,7 +92,7 @@ add_text(main_entry)
 add_text("push rbp")
 
 
-cmp_symbol = ['EQ_OP', '!=', 'GT_OP', 'LI_OP', 'GE_OP', 'LE_OP', '&&']
+cmp_symbol = ['EQ_OP', '!=', 'GT_OP', 'LT_OP', 'GE_OP', 'LE_OP', '&&']
 
 
 def get_type(symbol):
@@ -452,7 +452,7 @@ def cmp_main(cmp_e):
         switcher = {
         'EQ_OP': equal_routine,
         'GT_OP': greater_routine,
-        'LI_OP': less_routine,
+        'LT_OP': less_routine,
         'LE_OP': less_equ_routine,
         'GE_OP': greater_equ_routine,
         '&&': and_routine
@@ -468,12 +468,12 @@ def input_routine():
 def print_routine(fmt, arg, enter=0):
     print(fmt)
     print(fmt+'\\n')
-    if arg[0] == 'SHOWLN': 
+    if arg[0] == 'SHOWLN':
         add_text("mov rcx, " + get_str(fmt+'\n'))
-    else: 
+    else:
         add_text("mov rcx, " + get_str(fmt))
     reg_c = 1
-    showEnter = False 
+    showEnter = False
     while arg[1] != None :
         if arg[0] == 'RECURSIVE_MSG':
             a = arg[1]
@@ -503,24 +503,24 @@ def print_routine(fmt, arg, enter=0):
             break
         reg_c += 1
         arg = arg[2]
-       
+
 
     add_text("call " + printf_label)
     # add_text("xor rcx, rcx")
     # add_text("call " + fflush_label)
     if arg[1]==None:
             print("Last:"+str(showEnter))
-            
+
 
     if arg[0]=='SHOW'or arg[0] == 'SHOWLN':
         print_routine(arg[1],arg[2])
 
     #     if arg[0]=='SHOWLN':
-    #         showEnter = True 
+    #         showEnter = True
     #         print("SHOWLN TRUE"+arg[1])
     #         add_text('mov rcx, 0')
     #         add_text("call " + printf_label)
-    
+
 
 
 def assign_routine(dest, source):
@@ -933,6 +933,7 @@ def greater_equ_routine():
 
 
 def less_routine():
+    print("GU")
     add_text("jge _EXIF%d" % global_if_counter)
 
 
