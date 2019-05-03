@@ -73,6 +73,8 @@ def add_text(cmd):
 
 
 # init
+
+add_data("NewLine","\"\",10, 0")
 # sys_input
 # add_data("_fmin", "\"%ld\", 0")
 # add_text("_input:")
@@ -119,9 +121,9 @@ def get_var(symbol):
 
 def get_arr(ID,num):
     for i in global_arr :
-        if (i[0]==ID and num>=0 and num<int(i[1])):
+        if (i[0]==ID and int(num)>=0 and num<int(i[1])):
                 return ID
-    print_error("out of range %s" % ID)
+    print_error("out of range '%s' " % ID)
 
 
 def get_str(text):
@@ -132,7 +134,7 @@ def get_str(text):
 
 def print_error(error_str, show_line=True):
     if show_line:
-        print("ERROR : %s At line %d" % (error_str, lexer.lineno)) #fail number
+        print("ERROR : %s at line %d" % (error_str, lexer.lineno)) #fail number
     else:
         print("ERROR : %s" % error_str)
     sys.exit(1)
@@ -254,12 +256,12 @@ def getValueVarible(ex):
         if index_type == 'ID':
             get_var(ex[2])
             add_text('mov rbx, [%s]' % ex[2])
-            add_text('mov %s, [%s+rbx*8]' % (reg_order[reg_c],ex[1]))
-            return '%s'%reg_order[reg_c]
+            add_text('mov rax,[%s+rbx*8]' % (ex[1]))
+            return 'rax'
         elif index_type == 'CONSTANT':
             get_arr(ex[1],ex[2])
-            add_text('mov %s, [%s + %s * 8]' %(reg_order[reg_c], ex[1], ex[2]))
-            return '%s'%reg_order[reg_c]
+            add_text('mov rax, [%s + %s * 8]' %( ex[1], ex[2]))
+            return 'rax'
 
 # reg_order = ["rcx", "rdx", "r8", "r9"]
 def loop_routing(exp, stm):
@@ -340,10 +342,8 @@ def statement_main(stm):
         elif stm[0] == 'VAR_LIST' or stm[0] == 'VAR_LIST_VALUE':
             func(stm[1],stm[2],stm[3])
         elif stm[0]=='SHOWLN':
-            print("SHOWLN_ro")
-            func(stm[1], stm[2],1)
+            func(stm[1], stm[2],True)
         elif stm[0]=='SHOW':
-            print("SHOW--")
             func(stm[1], stm[2])
         else:
             func(stm[1], stm[2])
@@ -421,6 +421,7 @@ def cmp_main(cmp_e):
             add_text('add rbx, rcx')
             add_text('mov rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(a[1],a[2])
             add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
         else:
             error_token()
@@ -443,6 +444,7 @@ def cmp_main(cmp_e):
             add_text('add rbx, rcx')
             add_text('mov rbx, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(a[1],a[2])
             add_text('mov rbx, [%s + %s * 8]' % (b[1], b[2]))
         else:
             error_token()
@@ -465,15 +467,10 @@ def input_routine():
     add_text("call _input")
 
 
-def print_routine(fmt, arg, enter=0):
-    print(fmt)
-    print(fmt+'\\n')
-    if arg[0] == 'SHOWLN':
-        add_text("mov rcx, " + get_str(fmt+'\n'))
-    else:
-        add_text("mov rcx, " + get_str(fmt))
+def print_routine(fmt, arg,enter=False):
+    # print("mov rcx, " + get_str(fmt),fmt)
+    add_text("mov rcx, " + get_str(fmt))
     reg_c = 1
-    showEnter = False
     while arg[1] != None :
         if arg[0] == 'RECURSIVE_MSG':
             a = arg[1]
@@ -499,27 +496,28 @@ def print_routine(fmt, arg, enter=0):
                 expression_main(arg[1])
                 add_text("mov %s, rax" % reg_order[reg_c])
         if arg[0] == 'SHOW'or arg[0] == 'SHOWLN':
-            print("BREAK")
+            # print("BREAK -> print"+arg[1])
+            if arg[0] == 'SHOWLN':
+                enter=True
             break
         reg_c += 1
         arg = arg[2]
-
+        
 
     add_text("call " + printf_label)
+    # print("call printf"+str(arg[0]))
+    if arg[1]==None and enter==True:
+        add_text("mov rcx ,NewLine")
+        add_text("call " + printf_label)
+                
     # add_text("xor rcx, rcx")
-    # add_text("call " + fflush_label)
-    if arg[1]==None:
-            print("Last:"+str(showEnter))
-
+    # add_text("call " + fflush_label)            
 
     if arg[0]=='SHOW'or arg[0] == 'SHOWLN':
-        print_routine(arg[1],arg[2])
-
-    #     if arg[0]=='SHOWLN':
-    #         showEnter = True
-    #         print("SHOWLN TRUE"+arg[1])
-    #         add_text('mov rcx, 0')
-    #         add_text("call " + printf_label)
+        if arg[0] == 'SHOWLN':
+            print_routine(arg[1],arg[2],True)
+        else:
+            print_routine(arg[1],arg[2])
 
 
 
@@ -561,6 +559,7 @@ def assign_routine(dest, source):
             add_text('add rbx, rcx')
             add_text('mov [rbx], rax')
         elif index_type == 'CONSTANT':
+            get_arr(dest[1], dest[2])
             add_text('mov [%s + %s * 8], rax' % (dest[1], dest[2]))
     else:
         get_var(dest)
@@ -596,6 +595,7 @@ def plus_routine(a, b, count=0):
             else:
                 add_text('add rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(a[1], a[2])
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
@@ -624,6 +624,7 @@ def plus_routine(a, b, count=0):
             add_text('add rbx, rcx')
             add_text('add rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(b[1], b[2])
             add_text('add rax, [%s + %s * 8]' % (b[1], b[2]))
 
     else:
@@ -659,6 +660,7 @@ def minus_routine(a, b, count=0):
             else:
                 add_text('sub rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(a[1],a[2])
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
@@ -690,6 +692,7 @@ def minus_routine(a, b, count=0):
             add_text('add rbx, rcx')
             add_text('sub rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(b[1], b[2])
             add_text('sub rax, [%s + %s * 8]' % (b[1], b[2]))
     else:
         error_token()
@@ -725,6 +728,7 @@ def multiply_routine(a, b, count=0):
                 add_text('mov rax, [rbx]')
                 # add_text('imul rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(a[1], a[2])
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
@@ -753,6 +757,7 @@ def multiply_routine(a, b, count=0):
             add_text('add rbx, rcx')
             add_text('imul rax, [rbx]')
         elif index_type == 'CONSTANT':
+            get_arr(b[1], b[2])
             add_text('imul rax, [%s + %s * 8]' % (b[1], b[2]))
     else:
         error_token()
@@ -793,6 +798,7 @@ def divide_routine(a, b, count=0):
                 # add_text('mov rcx, [rbx]')
                 # add_text('idiv rcx')
         elif index_type == 'CONSTANT':
+            get_arr(a[1], a[2])
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
@@ -829,6 +835,7 @@ def divide_routine(a, b, count=0):
             add_data('mov rcx, [rbx]')
             add_text('idiv rcx')
         elif index_type == 'CONSTANT':
+            get_arr(b[1], b[2])
             add_text('mov rcx, [%s + %s * 8]' % (b[1], b[2]))
             add_text('idiv rcx')
     else:
@@ -871,6 +878,7 @@ def mod_routine(a, b, count=0):
                 # add_text('idiv rcx')
                 # add_text('mov rax, rdx')
         elif index_type == 'CONSTANT':
+            get_arr(a[1], a[2])
             if count == 0:
                 add_text('mov rax, [%s + %s * 8]' % (a[1], a[2]))
             else:
@@ -913,6 +921,7 @@ def mod_routine(a, b, count=0):
             add_text('idiv rcx')
             add_text('mov rax, rdx')
         elif index_type == 'CONSTANT':
+            get_arr(b[1], b[2])
             add_text('mov rcx, [%s + %s * 8]' % (b[1], b[2]))
             add_text('idiv rcx')
             add_text('mov rax, rdx')
