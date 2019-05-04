@@ -58,7 +58,6 @@ cmp_symbol = ['EQ_OP', 'NE_OP', 'GT_OP', 'LT_OP', 'GE_OP', 'LE_OP']
 
 
 def get_type(symbol):
-    
     if type(symbol) is tuple:
         if symbol[0] == 'LIST':
             return 'ARRAY'
@@ -84,6 +83,24 @@ def get_arr(ID,num):
         if (i[0]==ID and int(num)>=0 and num<int(i[1])):
                 return ID
     print_error("out of range '%s' " % ID)
+def get_len(ID):
+    get_var(ID)
+    for i in global_arr :
+        if (i[0]==ID):
+                add_text("mov rax, %s"%i[1])
+                # print("len of "+ID+" : "+i[1])
+                return
+    add_text("mov rax, 1")
+    # print("len of "+ID+" : 1")
+
+def get_num_len(ID):
+    get_var(ID)
+    for i in global_arr :
+        if (i[0]==ID):
+            print("len of "+ID+" : "+i[1])
+            return i[1]
+    print("len of "+ID+" : 1")
+    return "1"
 
 
 def get_str(text):
@@ -112,15 +129,14 @@ def create_var(var_name, value=0):
     else:
         global_var.append(var_name)
         val_type = get_type(value)
-        if val_type == 'INPUT':
-            asmdata += "%s dq 0\n" % var_name
-            input_routine()
-            add_text("mov [%s], rax" % var_name)
-        elif val_type == 'CONSTANT':
+        if val_type == 'CONSTANT':
             asmdata += "%s dq %s\n" % (var_name, value)
         elif val_type == 'ARRAY':
             asmdata += "%s dq 0\n" % var_name
             assign_stm(var_name, value)
+        elif val_type =="LEN":
+            value=get_num_len(value[1])
+            asmdata += "%s dq %s\n" % (var_name, value)
         elif val_type == 'EXP':
             asmdata += "%s dq 0\n" % var_name
             main( ('ASSIGN', var_name, value ))
@@ -201,6 +217,9 @@ def get_value_var(ex):
     if type_a == 'ID':
         get_var(ex)
         add_text("mov rax, [%s]" % ex)
+        return "rax"
+    elif type_a == 'LEN':
+        get_len(ex[1])
         return "rax"
     elif type_a == 'EXP':
         exp_main(ex)
@@ -368,8 +387,7 @@ def cmp_main(cmp_e):
     if type_a == 'EXP':
         exp_main(a)
     elif type_a == 'LEN':
-        print("lenn of "+str(a[1]))
-        # add_text("mov rax, [%s]" % a)
+        get_len(a[1])
     elif type_a == 'ID':
         get_var(a)
         add_text("mov rax, [%s]" % a)
@@ -396,8 +414,10 @@ def cmp_main(cmp_e):
         exp_main(b)
         add_text('pop rax')
     elif type_b == 'LEN':
-        print("lenn of "+str(b[1]))
-        # add_text("mov rax, [%s]" % a)
+        add_text('push rax')
+        get_len(b[1])
+        add_text('mov rbx,rax')
+        add_text('pop rax')
     elif type_b == 'ID':
         get_var(b)
         add_text("mov rbx, [%s]" % b)
@@ -495,10 +515,10 @@ def assign_stm(dest, source):
     elif s_type == 'ID':
         get_var(source)
         add_text('mov rax, [%s]' % source)
+    elif s_type =="LEN":
+        get_len(source[1])
     elif s_type == 'EXP':
         exp_main(source)
-    elif s_type == 'INPUT':
-        input_routine()
     elif s_type == 'ARRAY':
         index_type = get_type(source[2])
         get_var(source[1])
@@ -539,6 +559,8 @@ def plus_stm(a, b):
     elif a_type == 'ID':
         get_var(a)
         add_text("mov rax, [%s]" % a)
+    elif a_type == 'LEN':
+        get_len(a[1])
     elif a_type == 'EXP':
         exp_main(a)
     elif a_type == 'ARRAY':
@@ -561,6 +583,11 @@ def plus_stm(a, b):
     elif b_type == 'ID':
         get_var(b)
         add_text("add rax, [%s]" % b)
+    elif b_type == 'LEN':
+        add_text("push rax")
+        get_len(b[1])
+        add_text("pop rbx")
+        add_text("add rax,rbx")
     elif b_type == 'EXP':
         add_text("push rax")
         exp_main(b)
@@ -591,7 +618,8 @@ def minus_stm(a, b):
     elif a_type == 'ID':
         get_var(a)
         add_text("mov rax, [%s]" % a)
-
+    elif a_type == 'LEN':
+        get_len(a[1])
     elif a_type == 'EXP':
         exp_main(a)
     elif a_type == 'ARRAY':
@@ -614,6 +642,12 @@ def minus_stm(a, b):
     elif b_type == 'ID':
         get_var(b)
         add_text("sub rax, [%s]" % b)
+    elif b_type == 'LEN':
+        add_text("push rax")
+        get_len(b[1])
+        add_text("mov rbx,rax")
+        add_text("pop rax")
+        add_text("sub rax,rbx")
     elif b_type == 'EXP':
         add_text("push rax")
         exp_main(b)
@@ -644,6 +678,8 @@ def multiply_stm(a, b):
     elif a_type == 'ID':
         get_var(a)
         add_text("mov rax, [%s]" % a)
+    elif a_type == 'LEN':
+        get_len(a[1])
     elif a_type == 'EXP':
         exp_main(a)
     elif a_type == 'ARRAY':
@@ -666,6 +702,11 @@ def multiply_stm(a, b):
     elif b_type == 'ID':
         get_var(b)
         add_text("imul rax, [%s]" % b)
+    elif b_type == 'LEN':
+        add_text("push rax")
+        get_len(b[1])
+        add_text("pop rbx")
+        add_text('imul rax, rbx')
     elif b_type == 'EXP':
         add_text("push rax")
         exp_main(b)
@@ -696,6 +737,8 @@ def divide_stm(a, b):
     elif a_type == 'ID':
         get_var(a)
         add_text('mov rax, [%s]' % a)
+    elif a_type == 'LEN':
+        get_len(a[1])
     elif a_type == 'EXP':
         exp_main(a)
     elif a_type == 'ARRAY':
@@ -719,17 +762,28 @@ def divide_stm(a, b):
     add_text('cqo')
     # add_text('xor rdx, rdx')
     if b_type == 'CONSTANT':
+        if b == 0 :
+            print_error("division by zero is undefined")
         add_text('mov rcx, %s' % b)
         add_text('idiv rcx')
     elif b_type == 'ID':
         get_var(b)
         add_text('mov rcx, [%s]' % b)
         add_text('idiv rcx')
+    elif b_type == 'LEN':
+        add_text("push rax")
+        get_len(b[1])
+        add_text("mov rcx, rax")
+        add_text("pop rbx")
+        add_text('cqo')
+        add_text("mov rax, rbx")
+        add_text('idiv rcx')
     elif b_type == 'EXP':
         add_text("push rax")
         exp_main(b)
         add_text("mov rcx, rax")
         add_text("pop rbx")
+        add_text('cqo')
         add_text("mov rax, rbx")
         add_text('idiv rcx')
     elif b_type == 'ARRAY':
@@ -741,10 +795,12 @@ def divide_stm(a, b):
             add_text('imul rcx, 8')
             add_text('add rbx, rcx')
             add_data('mov rcx, [rbx]')
+            add_text('cqo')
             add_text('idiv rcx')
         elif index_type == 'CONSTANT':
             get_arr(b[1], b[2])
             add_text('mov rcx, [%s + %s * 8]' % (b[1], b[2]))
+            add_text('cqo')
             add_text('idiv rcx')
     else:
         error_token()
@@ -759,7 +815,8 @@ def mod_stm(a, b):
     elif a_type == 'ID':
         get_var(a)
         add_text('mov rax, [%s]' % a)
-
+    elif a_type == 'LEN':
+        get_len(a[1])
     elif a_type == 'EXP':
         exp_main(a)
     elif a_type == 'ARRAY':
@@ -779,6 +836,8 @@ def mod_stm(a, b):
 
     add_text('cqo')
     if b_type == 'CONSTANT':
+        if b == 0 :
+            print_error("division by zero is undefined")
         add_text('mov rcx, %s' % b)
         add_text('idiv rcx')
         add_text('mov rax, rdx')
@@ -787,11 +846,21 @@ def mod_stm(a, b):
         add_text('mov rcx, [%s]' % b)
         add_text('idiv rcx')
         add_text('mov rax, rdx')
+    elif b_type == 'LEN':
+        add_text("push rax")
+        get_len(b[1])
+        add_text("mov rcx, rax")
+        add_text("pop rbx")
+        add_text("mov rax, rbx")
+        add_text('cqo')
+        add_text('idiv rcx')
+        add_text("mov rax, rdx")
     elif b_type == 'EXP':
         add_text("push rax")
         exp_main(b)
         add_text("mov rcx, rax")
         add_text("pop rbx")
+        add_text('cqo')
         add_text("mov rax, rbx")
         add_text('idiv rcx')
         add_text("mov rax, rdx")
@@ -804,11 +873,13 @@ def mod_stm(a, b):
             add_text('imul rcx, 8')
             add_text('add rbx, rcx')
             add_data('mov rcx, [rbx]')
+            add_text('cqo')
             add_text('idiv rcx')
             add_text('mov rax, rdx')
         elif index_type == 'CONSTANT':
             get_arr(b[1], b[2])
             add_text('mov rcx, [%s + %s * 8]' % (b[1], b[2]))
+            add_text('cqo')
             add_text('idiv rcx')
             add_text('mov rax, rdx')
     else:

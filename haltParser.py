@@ -91,6 +91,7 @@ def p_type_num(p):
              | MINUS_OP ID
              | MINUS_OP list_num
              | ID
+             | len L_BRACKET ID R_BRACKET 
     type_var_num : list_num
                  | MINUS_OP ID
                  | MINUS_OP list_num
